@@ -1,0 +1,24 @@
+# Visual companion mockups (local brainstorm artifacts)
+.superpowers/
+
+# Node / Vite (added when app is scaffolded)
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# TypeScript build artifacts (tsc -b composite output)
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# Logs
+*.log
+npm-debug.log*
