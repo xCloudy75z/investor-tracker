@@ -32,13 +32,34 @@ export function DataScreen({ onBack, onReplaced }: Props) {
   }
 
   const [updating, setUpdating] = useState(false);
+  const [check, setCheck] = useState<string | null>(null);
+
+  async function checkForUpdates() {
+    setCheck("Checking…");
+    try {
+      const res = await fetch(`${import.meta.env.BASE_URL}version.json?ts=${Date.now()}`, { cache: "no-store" });
+      if (!res.ok) throw new Error("no version file");
+      const data = await res.json() as { version?: string };
+      if (data.version && data.version === __APP_VERSION__) setCheck(`latest:✓ You're on the latest version.`);
+      else setCheck(`update:Update available (latest: ${data.version ?? "?"}). Tap "Update app" below.`);
+    } catch {
+      setCheck("info:Couldn't check — make sure you're online.");
+    }
+  }
 
   return (
     <main className="wrap">
       <header className="bar"><button className="back" onClick={onBack}>‹ Settings &amp; data</button></header>
 
       <h2 className="sect">App</h2>
-      <p className="muted small">Get the latest version without reinstalling. Updates the app only — your saved data is kept.</p>
+      <p className="muted small">Version <b className="ink">{__APP_VERSION__}</b></p>
+      <button className="datalink" onClick={checkForUpdates}>Check for updates</button>
+      {check && (
+        <p className={check.startsWith("latest:") ? "okmsg" : check.startsWith("update:") ? "err" : "muted small"}>
+          {check.replace(/^(latest|update|info):/, "")}
+        </p>
+      )}
+      <p className="muted small">Updating gets the latest version without reinstalling — your saved data is kept.</p>
       <button className="datalink" disabled={updating} onClick={() => { setUpdating(true); forceUpdate(); }}>
         {updating ? "Updating…" : "Update app to latest version"}
       </button>

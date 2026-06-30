@@ -3,11 +3,21 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
+// Build identifier: a UTC build timestamp, unique per deploy.
+const BUILD_ID = new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC";
+
 // Deployed to GitHub Pages project site at /investor-tracker/.
 export default defineConfig({
   base: "/investor-tracker/",
+  define: { __APP_VERSION__: JSON.stringify(BUILD_ID) },
   plugins: [
     react(),
+    {
+      name: "emit-version-json",
+      generateBundle() {
+        this.emitFile({ type: "asset", fileName: "version.json", source: JSON.stringify({ version: BUILD_ID }) });
+      }
+    },
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg"],
