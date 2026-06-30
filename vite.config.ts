@@ -3,8 +3,8 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
 
-// Build identifier: a UTC build timestamp, unique per deploy.
-const BUILD_ID = new Date().toISOString().slice(0, 19).replace("T", " ") + " UTC";
+// Build identifier: a UAE-time (GST, UTC+4) build timestamp, unique per deploy.
+const BUILD_ID = new Date(Date.now() + 4 * 60 * 60 * 1000).toISOString().slice(0, 16).replace("T", " ") + " (UAE)";
 
 // Deployed to GitHub Pages project site at /investor-tracker/.
 export default defineConfig({
