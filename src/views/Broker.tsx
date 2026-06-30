@@ -1,0 +1,102 @@
+import { accountStanding, reconcile, feesPaid, purificationSummary, type View } from "../lib/calc";
+import { formatMoney, convert } from "../lib/money";
+import type { Envelope, Account } from "../lib/types";
+import { AllocationBar } from "../components/AllocationBar";
+
+interface Props {
+  env: Envelope;
+  account: Account;
+  view: View;
+  setView: (v: View) => void;
+  onBack: () => void;
+}
+
+export function Broker({ env, account, view, setView, onBack }: Props) {
+  const fx = env.settings.fxRateNow;
+  const flows = env.cashflows.filter((f) => f.accountId === account.id);
+  const holdings = env.holdings.filter((h) => h.accountId === account.id);
+  const r = accountStanding({ account, flows, holdings, fxRateNow: fx, view });
+  const rec = reconcile(flows, account);
+  const fees = feesPaid(flows, view, account);
+  const feesAll = feesPaid(flows, "all", account);
+  const pur = purificationSummary(env.purification, account.id);
+  const pos = r.standingBase >= 0;
+
+  const deposits = flows
+    .filter((f) => f.type === "deposit")
+    .filter((f) => view === "all" || f.date >= account.roundStartDate)
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
+  const nonCash = holdings.filter((h) => h.assetClass !== "cash");
+  const cash = holdings.filter((h) => h.assetClass === "cash");
+
+  return (
+    <main className="wrap">
+      <header className="bar">
+        <button className="back" onClick={onBack}>‹ {account.label}</button>
+        <div className="toggle">
+          <button className={view === "current" ? "on" : ""} onClick={() => setView("current")}>Current</button>
+          <button className={view === "all" ? "on" : ""} onClick={() => setView("all")}>All-time</button>
+        </div>
+      </header>
+
+      <section className="hero">
+        <div className="cell"><div className="lab">In</div><div className="big">{formatMoney(r.capitalBase, "AED")}</div></div>
+        <div className="cell"><div className="lab">Worth now</div><div className="big">{formatMoney(r.worthBase, "AED")}</div></div>
+        <div className="cell"><div className="lab">Standing</div>
+          <div className={`big ${pos ? "pos" : "neg"}`}>{formatMoney(r.standingBase, "AED")}</div>
+          <div className={`sub ${pos ? "pos" : "neg"}`}>{(r.standingPct * 100).toFixed(1)}%</div>
+        </div>
+      </section>
+
+      <div className={`recon ${rec.reconciled ? "ok" : "warn"}`}>
+        {rec.brokerNetNative === null
+          ? "No broker net-deposits figure to reconcile."
+          : rec.reconciled
+            ? "✓ Reconciled to the broker figure."
+            : `Reconciliation gap: ${formatMoney(rec.gapNative, "USD")}`}
+        {typeof account.brokerTwrPct === "number" && (
+          <span className="muted"> · broker TWR {account.brokerTwrPct}% (broker figure — ignore)</span>
+        )}
+      </div>
+
+      <h2 className="sect">Deposits {view === "current" ? "this round" : "all-time"}</h2>
+      {deposits.length === 0 ? <p className="muted small">None.</p> : deposits.map((d) => (
+        <div className="row" key={d.id}>
+          <div>{d.date}{d.status === "processing" ? " · processing" : ""}</div>
+          <div className="r">{formatMoney(d.amountBase, "AED")} <span className="muted">· {formatMoney(d.amountNative, "USD")} @{d.fxRateUsed}</span></div>
+        </div>
+      ))}
+
+      <h2 className="sect">Holdings · allocation</h2>
+      <AllocationBar holdings={[...nonCash, ...cash]} />
+      {nonCash.map((h) => (
+        <div className="row" key={h.id}>
+          <div className="hn">{h.instrument}{h.isCopyTrade ? " (copy)" : ""} <span className={`chip chip-${h.halalStatus}`}>{h.halalStatus.replace("_", " ")}</span></div>
+          <div className="r">{formatMoney(h.currentValueNative, "USD")}
+            {typeof h.unrealizedPlNative === "number" && (
+              <span className={h.unrealizedPlNative >= 0 ? "pos" : "neg"}> {h.unrealizedPlNative >= 0 ? "+" : ""}{formatMoney(h.unrealizedPlNative, "USD")}</span>
+            )}
+          </div>
+        </div>
+      ))}
+      {cash.map((c) => (
+        <div className="idle" key={c.id}>● Idle cash {formatMoney(convert(c.currentValueNative, fx), "AED")} ({formatMoney(c.currentValueNative, "USD")}) — uninvested</div>
+      ))}
+
+      <h2 className="sect">Fees paid</h2>
+      <div className="box spread">
+        <div><div className="big2">{formatMoney(fees, "AED")}</div><span className="muted small">this {view === "current" ? "round" : "all-time"}</span></div>
+        <div className="r muted small">All-time<br /><b className="ink">{formatMoney(feesAll, "AED")}</b></div>
+      </div>
+
+      <h2 className="sect">Purification <span className="chip chip-warn">screened, not certified</span></h2>
+      <div className="box">
+        <div className="spread">
+          <div><div className="big2 gold">{formatMoney(pur.outstandingBase, "AED")} outstanding</div><span className="muted small">to give away</span></div>
+        </div>
+        <div className="row noborder"><div className="muted">Total ever owed</div><div className="r">{formatMoney(pur.owedBase, "AED")}</div></div>
+        <div className="row noborder"><div className="muted">Donated to date</div><div className="r">{formatMoney(pur.donatedBase, "AED")}</div></div>
+      </div>
+    </main>
+  );
+}

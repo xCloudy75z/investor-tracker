@@ -1,6 +1,7 @@
 // src/app/runtime.ts — the ONLY module allowed to touch platform non-determinism.
-import { loadEnvelope, saveEnvelope, type StorageLike } from "../lib/store";
+import { loadEnvelope, saveEnvelope, STORAGE_KEY, type StorageLike } from "../lib/store";
 import type { Envelope } from "../lib/types";
+import { serializeEnvelope } from "../lib/importer";
 
 const browserStorage: StorageLike = {
   getItem: (k) => window.localStorage.getItem(k),
@@ -17,3 +18,35 @@ export function save(env: Envelope): void {
 
 export const now = (): string => new Date().toISOString();
 export const newId = (): string => crypto.randomUUID();
+
+// --- Data file helpers (non-pure: DOM + Date) ---
+
+const BACKUP_KEY = "investor-app:lastBackup";
+
+/** Trigger a browser download of text as a file. */
+export function downloadText(filename: string, text: string): void {
+  const blob = new Blob([text], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/** Read a File object's text contents. */
+export function readFileText(file: File): Promise<string> {
+  return file.text();
+}
+
+/** Snapshot current data into a backup slot, then save the new envelope. */
+export function replaceData(env: Envelope): void {
+  const current = window.localStorage.getItem(STORAGE_KEY);
+  if (current) window.localStorage.setItem(BACKUP_KEY, current);
+  save(env);
+}
+
+/** Current data serialized for export/backup download. */
+export function exportText(): string {
+  return serializeEnvelope(load());
+}
