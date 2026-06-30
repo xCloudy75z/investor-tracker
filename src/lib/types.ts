@@ -31,6 +31,10 @@ export interface CashFlow {
   baseCcy: Ccy;
   fxRateUsed: number;
   feeKind?: FeeKind;
+  /** Fees only: true = accrued but NOT yet deducted from the reported holdings/cash,
+   *  so it reduces current worth. Omitted/false = already settled/deducted (shown in
+   *  fees-paid totals but NOT subtracted from worth again). */
+  accrued?: boolean;
   status: FlowStatus;
   sourceRef?: string;
   memo?: string;

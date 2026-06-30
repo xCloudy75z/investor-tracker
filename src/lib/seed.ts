@@ -15,7 +15,7 @@ export function seedEnvelope(): Envelope {
     { id: "d-w0", accountId: "demo-1", date: "2025-03-01", type: "withdrawal", amountNative: 10000, nativeCcy: "USD", amountBase: 36000, baseCcy: "AED", fxRateUsed: 3.60, status: "completed", memo: "prior withdrawal" },
     { id: "d-1", accountId: "demo-1", date: "2026-02-01", type: "deposit", amountNative: 100000, nativeCcy: "USD", amountBase: 368000, baseCcy: "AED", fxRateUsed: 3.68, status: "completed" },
     { id: "d-2", accountId: "demo-1", date: "2026-03-01", type: "deposit", amountNative: 200000, nativeCcy: "USD", amountBase: 736000, baseCcy: "AED", fxRateUsed: 3.68, status: "completed" },
-    { id: "d-fee", accountId: "demo-1", date: "2026-03-15", type: "fee", amountNative: 500, nativeCcy: "USD", amountBase: 1840, baseCcy: "AED", fxRateUsed: 3.68, status: "completed", feeKind: "management", memo: "management accrual" }
+    { id: "d-fee", accountId: "demo-1", date: "2026-03-15", type: "fee", amountNative: 500, nativeCcy: "USD", amountBase: 1840, baseCcy: "AED", fxRateUsed: 3.68, status: "completed", feeKind: "management", accrued: true, memo: "management accrual (not yet deducted)" }
   ];
 
   const holdings: Holding[] = [

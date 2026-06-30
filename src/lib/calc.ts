@@ -20,10 +20,13 @@ export function capitalDeployed(flows: CashFlow[], view: View, acc: Account): nu
     }, 0);
 }
 
-/** Pending (completed) fees in native minor units. */
+/** Accrued fees not yet reflected in the reported holdings/cash, in native minor units.
+ *  ONLY fees flagged `accrued` reduce current worth — a fee already settled/deducted
+ *  (e.g. a paid withdrawal fee) is excluded here and must not be subtracted from worth
+ *  again (it already reduced the holdings/cash the broker reports). */
 export function pendingFeesNative(flows: CashFlow[], acc: Account): number {
   return flows
-    .filter((f) => f.accountId === acc.id && f.type === "fee" && f.status === "completed")
+    .filter((f) => f.accountId === acc.id && f.type === "fee" && f.accrued === true)
     .reduce((sum, f) => sum + f.amountNative, 0);
 }
 
