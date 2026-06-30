@@ -52,8 +52,9 @@ export function DataScreen({ onBack, onReplaced }: Props) {
       <header className="bar"><button className="back" onClick={onBack}>‹ Settings &amp; data</button></header>
 
       <h2 className="sect">App</h2>
-      <p className="muted small">Version <b className="ink">{__APP_VERSION__}</b></p>
-      <button className="datalink" onClick={checkForUpdates}>Check for updates</button>
+      <p className="verline">Version <b>{__APP_VERSION__}</b></p>
+      <p className="muted small">This is when this version was released (UAE time), not the current time.</p>
+      <button className="datalink" onClick={checkForUpdates} style={{ marginTop: 10 }}>Check for updates</button>
       {check && (
         <p className={check.startsWith("latest:") ? "okmsg" : check.startsWith("update:") ? "err" : "muted small"}>
           {check.replace(/^(latest|update|info):/, "")}
