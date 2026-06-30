@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { parseImport } from "../lib/importer";
-import { downloadText, exportText, replaceData, readFileText } from "../app/runtime";
+import { downloadText, exportText, replaceData, readFileText, forceUpdate } from "../app/runtime";
 import type { Envelope } from "../lib/types";
 import { Confirm } from "../components/Confirm";
 
@@ -31,9 +31,17 @@ export function DataScreen({ onBack, onReplaced }: Props) {
     onReplaced(pending);
   }
 
+  const [updating, setUpdating] = useState(false);
+
   return (
     <main className="wrap">
-      <header className="bar"><button className="back" onClick={onBack}>‹ Data</button></header>
+      <header className="bar"><button className="back" onClick={onBack}>‹ Settings &amp; data</button></header>
+
+      <h2 className="sect">App</h2>
+      <p className="muted small">Get the latest version without reinstalling. Updates the app only — your saved data is kept.</p>
+      <button className="datalink" disabled={updating} onClick={() => { setUpdating(true); forceUpdate(); }}>
+        {updating ? "Updating…" : "Update app to latest version"}
+      </button>
 
       <h2 className="sect">Export / backup</h2>
       <p className="muted small">Download your current data as a file you can keep or re-import.</p>

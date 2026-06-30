@@ -50,7 +50,7 @@ export function Home({ env, view, setView, onOpenBroker, onOpenData }: Props) {
         );
       })}
 
-      <button className="datalink" onClick={onOpenData}>Import / Export data</button>
+      <button className="datalink" onClick={onOpenData}>Settings &amp; data</button>
     </main>
   );
 }
