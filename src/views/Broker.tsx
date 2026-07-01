@@ -31,7 +31,7 @@ export function Broker({ env, account, view, setView, onBack }: Props) {
 
   return (
     <main className="wrap">
-      <header className="bar">
+      <header className="appbar rise d1">
         <button className="back" onClick={onBack}>‹ {account.label}</button>
         <div className="toggle">
           <button className={view === "current" ? "on" : ""} onClick={() => setView("current")}>Current</button>
@@ -39,31 +39,32 @@ export function Broker({ env, account, view, setView, onBack }: Props) {
         </div>
       </header>
 
-      <section className="hero">
-        <div className="cell"><div className="lab">In</div><div className="big">{formatMoney(r.capitalBase, "AED")}</div></div>
-        <div className="cell"><div className="lab">Worth now</div><div className="big">{formatMoney(r.worthBase, "AED")}</div></div>
-        <div className="cell"><div className="lab">Standing</div>
-          <div className={`big ${pos ? "pos" : "neg"}`}>{formatMoney(r.standingBase, "AED")}</div>
-          <div className={`sub ${pos ? "pos" : "neg"}`}>{(r.standingPct * 100).toFixed(1)}%</div>
+      <section className="hero rise d2">
+        <div className="hcap">Standing · {view === "current" ? "current round" : "all-time"}</div>
+        <div className={`num hstand ${pos ? "pos" : "neg"}`}>{formatMoney(r.standingBase, "AED")}</div>
+        <span className={`pct ${pos ? "pos" : "neg"}`}>{pos ? "▴" : "▾"} {Math.abs(r.standingPct * 100).toFixed(1)}%</span>
+        <div className="hsplit">
+          <div><div className="l">Put in</div><div className="num v">{formatMoney(r.capitalBase, "AED")}</div></div>
+          <div><div className="l">Worth now</div><div className="num v">{formatMoney(r.worthBase, "AED")}</div></div>
         </div>
       </section>
 
-      <div className={`recon ${rec.reconciled ? "ok" : "warn"}`}>
+      <div className={`recon ${rec.reconciled ? "ok" : "warn"} rise d3`}>
         {rec.brokerNetNative === null
           ? "No broker net-deposits figure to reconcile."
           : rec.reconciled
             ? "✓ Reconciled to the broker figure."
             : `Reconciliation gap: ${formatMoney(rec.gapNative, "USD")}`}
         {typeof account.brokerTwrPct === "number" && (
-          <span className="muted"> · broker TWR {account.brokerTwrPct}% (broker figure — ignore)</span>
+          <span className="muted"> · broker TWR {account.brokerTwrPct}% (ignore)</span>
         )}
       </div>
 
-      <h2 className="sect">Deposits {view === "current" ? "this round" : "all-time"}</h2>
+      <h2 className="sect">Deposits · {view === "current" ? "this round" : "all-time"}</h2>
       {deposits.length === 0 ? <p className="muted small">None.</p> : deposits.map((d) => (
         <div className="row" key={d.id}>
           <div>{d.date}{d.status === "processing" ? " · processing" : ""}</div>
-          <div className="r">{formatMoney(d.amountBase, "AED")} <span className="muted">· {formatMoney(d.amountNative, "USD")} @{d.fxRateUsed}</span></div>
+          <div className="r num">{formatMoney(d.amountBase, "AED")} <span className="muted">· {formatMoney(d.amountNative, "USD")} @{d.fxRateUsed}</span></div>
         </div>
       ))}
 
@@ -71,8 +72,8 @@ export function Broker({ env, account, view, setView, onBack }: Props) {
       <AllocationBar holdings={[...nonCash, ...cash]} />
       {nonCash.map((h) => (
         <div className="row" key={h.id}>
-          <div className="hn">{h.instrument}{h.isCopyTrade ? " (copy)" : ""} <span className={`chip chip-${h.halalStatus}`}>{h.halalStatus.replace("_", " ")}</span></div>
-          <div className="r">{formatMoney(h.currentValueNative, "USD")}
+          <div className="hn">{h.instrument}{h.isCopyTrade ? " (copy)" : ""} <span className={`chip-${h.halalStatus}`}>{h.halalStatus.replace("_", " ")}</span></div>
+          <div className="r num">{formatMoney(h.currentValueNative, "USD")}
             {typeof h.unrealizedPlNative === "number" && (
               <span className={h.unrealizedPlNative >= 0 ? "pos" : "neg"}> {h.unrealizedPlNative >= 0 ? "+" : ""}{formatMoney(h.unrealizedPlNative, "USD")}</span>
             )}
@@ -85,17 +86,17 @@ export function Broker({ env, account, view, setView, onBack }: Props) {
 
       <h2 className="sect">Fees paid</h2>
       <div className="box spread">
-        <div><div className="big2">{formatMoney(fees, "AED")}</div><span className="muted small">this {view === "current" ? "round" : "all-time"}</span></div>
-        <div className="r muted small">All-time<br /><b className="ink">{formatMoney(feesAll, "AED")}</b></div>
+        <div><div className="num big2 neg">{formatMoney(fees, "AED")}</div><span className="muted small">this {view === "current" ? "round" : "all-time"}</span></div>
+        <div className="r muted small">All-time<br /><b className="num ink">{formatMoney(feesAll, "AED")}</b></div>
       </div>
 
-      <h2 className="sect">Purification <span className="chip chip-warn">screened, not certified</span></h2>
+      <h2 className="sect">Purification <span className="chip-warn">screened, not certified</span></h2>
       <div className="box">
         <div className="spread">
-          <div><div className="big2 gold">{formatMoney(pur.outstandingBase, "AED")} outstanding</div><span className="muted small">to give away</span></div>
+          <div><div className="num big2 gold">{formatMoney(pur.outstandingBase, "AED")}</div><span className="muted small">outstanding · to give away</span></div>
         </div>
-        <div className="row noborder"><div className="muted">Total ever owed</div><div className="r">{formatMoney(pur.owedBase, "AED")}</div></div>
-        <div className="row noborder"><div className="muted">Donated to date</div><div className="r">{formatMoney(pur.donatedBase, "AED")}</div></div>
+        <div className="row noborder"><div className="muted">Total ever owed</div><div className="r num">{formatMoney(pur.owedBase, "AED")}</div></div>
+        <div className="row noborder"><div className="muted">Donated to date</div><div className="r num">{formatMoney(pur.donatedBase, "AED")}</div></div>
       </div>
     </main>
   );
