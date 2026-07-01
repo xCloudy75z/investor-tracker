@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { load, loadTheme } from "./app/runtime";
+import { load } from "./app/runtime";
 import { seedEnvelope } from "./lib/seed";
 import type { View } from "./lib/calc";
 import type { Envelope } from "./lib/types";
@@ -16,7 +16,6 @@ export function App() {
   const [route, setRoute] = useState<Route>({ name: "home" });
 
   useEffect(() => {
-    loadTheme();
     let e = load();
     if (e.accounts.length === 0) { e = seedEnvelope(); }
     setEnv(e);

@@ -1,21 +1,14 @@
 import { useState } from "react";
 import { parseImport } from "../lib/importer";
-import { downloadText, exportText, replaceData, readFileText, forceUpdate, loadTheme, setTheme, type Theme } from "../app/runtime";
+import { downloadText, exportText, replaceData, readFileText, forceUpdate } from "../app/runtime";
 import type { Envelope } from "../lib/types";
 import { Confirm } from "../components/Confirm";
 
 interface Props { onBack: () => void; onReplaced: (env: Envelope) => void; }
 
 export function DataScreen({ onBack, onReplaced }: Props) {
-  const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState<Envelope | null>(null);
-  const [theme, setThemeState] = useState<Theme>(() => loadTheme());
-
-  function chooseTheme(t: Theme) {
-    setTheme(t);
-    setThemeState(t);
-  }
 
   function tryParse(src: string) {
     const r = parseImport(src);
@@ -27,7 +20,6 @@ export function DataScreen({ onBack, onReplaced }: Props) {
     const file = e.target.files?.[0];
     if (!file) return;
     const content = await readFileText(file);
-    setText(content);
     tryParse(content);
   }
 
@@ -57,19 +49,9 @@ export function DataScreen({ onBack, onReplaced }: Props) {
     <main className="wrap">
       <header className="bar"><button className="back" onClick={onBack}>‹ Settings &amp; data</button></header>
 
-      <h2 className="sect">Display</h2>
-      <div className="settings-row">
-        <span>Theme</span>
-        <div className="seg">
-          <button className={theme === "dark" ? "active" : ""} onClick={() => chooseTheme("dark")}>Dark</button>
-          <button className={theme === "light" ? "active" : ""} onClick={() => chooseTheme("light")}>Light</button>
-        </div>
-      </div>
-
       <h2 className="sect">App</h2>
-      <p className="verline">Version <b>{__APP_VERSION__}</b></p>
-      <p className="muted small">This is when this version was released (UAE time), not the current time.</p>
-      <button className="datalink" onClick={checkForUpdates} style={{ marginTop: 10 }}>Check for updates</button>
+      <p className="muted small">Version <b className="ink">{__APP_VERSION__}</b></p>
+      <button className="datalink" onClick={checkForUpdates}>Check for updates</button>
       {check && (
         <p className={check.startsWith("latest:") ? "okmsg" : check.startsWith("update:") ? "err" : "muted small"}>
           {check.replace(/^(latest|update|info):/, "")}
@@ -85,9 +67,11 @@ export function DataScreen({ onBack, onReplaced }: Props) {
       <button className="datalink" onClick={() => downloadText("investor-tracker-backup.json", exportText())}>Download my data</button>
 
       <h2 className="sect">Import</h2>
-      <p className="muted small">Load a data file (e.g. one prepared from your statements). This replaces current data — a backup is saved automatically first.</p>
-      <input type="file" accept="application/json,.json" onChange={onFile} />
-      <textarea className="paste" placeholder="…or paste data here" value={text} onChange={(e) => { setText(e.target.value); }} onBlur={() => text && tryParse(text)} />
+      <p className="muted small">Load the data file I prepare from your statements. This replaces current data — a backup is saved automatically first.</p>
+      <label className="datalink" style={{ textAlign: "center", cursor: "pointer" }}>
+        Choose data file…
+        <input type="file" accept="application/json,.json" onChange={onFile} style={{ display: "none" }} />
+      </label>
       {error && <p className="err">{error}</p>}
       {pending && <p className="okmsg">Looks valid: {pending.accounts.length} account(s), {pending.cashflows.length} cash flows, {pending.holdings.length} holdings.</p>}
       {pending && <ConfirmGate onApply={applyReplace} />}

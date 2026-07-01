@@ -1,146 +1,60 @@
-/* ===== Investment Tracker — V2 "Quiet Wealth" design system (shared tokens) ===== */
-:root{
-  --radius:14px; --radius-sm:10px; --radius-pill:999px; --container:440px;
-  --green:#2ecc71; --amber:#f5a623; --red:#e74c3c;
-  --shadow-1:0 1px 2px rgba(0,0,0,.08); --shadow-2:0 6px 24px rgba(0,0,0,.18);
-  --sarwa:var(--accent); --baraka:#f5a623; --etoro:#5b8def;
-}
-html[data-theme="dark"]{
-  --bg:#1a1d23; --surface:#262b33; --surface-2:#323843; --surface-3:#3c4250;
-  --text:#f1f3f7; --muted:#a3acbb; --border:#3f4654;
-  --accent:#5ab19a; --accent-soft:rgba(90,177,154,.16); --accent-text:#ffffff;
-  --hero-glow:rgba(90,177,154,.10); --scrim:rgba(0,0,0,.55);
-  --grnbg:rgba(46,204,113,.16); --redbg:rgba(231,76,60,.18);
-}
-html[data-theme="light"]{
-  --bg:#eef0f4; --surface:#fff; --surface-2:#f5f7fa; --surface-3:#eef1f5;
-  --text:#111827; --muted:#6b7280; --border:#e5e7eb;
-  --accent:#3b82f6; --accent-soft:rgba(59,130,246,.12); --accent-text:#ffffff;
-  --hero-glow:rgba(59,130,246,.08); --scrim:rgba(15,23,42,.45);
-  --grnbg:rgba(46,204,113,.14); --redbg:rgba(231,76,60,.14);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{min-height:100%}
-body{
-  font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-  background:var(--bg); color:var(--text);
-  -webkit-font-smoothing:antialiased;
-  -webkit-tap-highlight-color:transparent;
-}
-.num{font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-.wrap{max-width:var(--container);margin:0 auto;padding:22px 18px 70px}
-.pos{color:var(--green)} .neg{color:var(--red)} .gold{color:var(--amber)} .muted{color:var(--muted)} .ink{color:var(--text)} .small{font-size:11.5px}
-button{font:inherit;cursor:pointer}
-*:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:root { --paper:#faf6ef; --card:#fffdf8; --ink:#2b2b2b; --mut:#9a907f; --grn:#2f7a4d; --red:#b4462f; --gold:#b8860b; --line:#e9e1d4; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; font-variant-numeric: tabular-nums; }
+.wrap { max-width: 480px; margin: 0 auto; padding: 16px; }
+.bar { display:flex; justify-content:space-between; align-items:center; color:var(--mut); font-size:13px; margin-bottom:12px; }
+.toggle { display:flex; background:#efe7d8; border-radius:999px; padding:3px; }
+.toggle button { border:0; background:transparent; color:var(--mut); border-radius:999px; padding:4px 10px; font-size:12px; cursor:pointer; }
+.toggle button.on { background:var(--card); color:var(--ink); }
+.hero { display:flex; background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px; }
+.cell { flex:1; text-align:center; } .cell + .cell { border-left:1px solid var(--line); }
+.lab { font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--mut); }
+.big { font-size:17px; font-weight:700; margin-top:4px; } .sub { font-size:11px; }
+.pos { color:var(--grn); } .neg { color:var(--red); }
+.sect { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--mut); margin:18px 2px 8px; }
+.card { display:flex; justify-content:space-between; align-items:center; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:8px; }
+.nm { font-weight:600; font-size:14px; } .vals { text-align:right; } .w { font-weight:600; font-size:14px; } .p { font-size:12px; }
 
-/* ===== App bar / brand ===== */
-.appbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-.brand{display:flex;align-items:center;gap:9px}
-.mark{width:30px;height:30px;border-radius:9px;background:var(--accent);display:grid;place-items:center;box-shadow:var(--shadow-1)}
-.mark svg{width:17px;height:17px}
-.brand b{font-weight:600;font-size:15.5px;letter-spacing:-.01em;color:var(--text)}
-.back{border:0;background:transparent;color:var(--muted);font:inherit;font-weight:600;font-size:14px;cursor:pointer;padding:6px 2px;display:flex;align-items:center;gap:4px}
-.back:hover{color:var(--text)}
+/* Buttons / links */
+.cardbtn { width:100%; text-align:left; border:1px solid var(--line); cursor:pointer; font:inherit; }
+.datalink { display:block; width:100%; margin-top:14px; padding:11px; border:1px solid var(--line); border-radius:12px; background:var(--card); color:var(--ink); font:inherit; cursor:pointer; }
+.datalink:disabled { opacity:.5; cursor:not-allowed; }
+.danger { color:var(--red); border-color:var(--red); }
+.back { border:0; background:transparent; color:var(--mut); font:inherit; cursor:pointer; padding:0; }
 
-/* ===== Segmented toggle ===== */
-.toggle{display:flex;background:var(--surface-3);border:1px solid var(--border);border-radius:var(--radius-pill);padding:3px}
-.toggle button{border:0;background:transparent;color:var(--muted);font:inherit;font-size:12px;font-weight:600;padding:6px 12px;border-radius:var(--radius-pill);cursor:pointer;transition:.22s}
-.toggle button.on{background:var(--surface);color:var(--text);box-shadow:var(--shadow-1)}
+/* Reconciliation banner */
+.recon { font-size:11px; border-radius:8px; padding:6px 9px; margin-top:8px; }
+.recon.ok { color:var(--grn); background:#eef6ef; }
+.recon.warn { color:var(--red); background:#fbeeea; }
+.muted { color:var(--mut); } .small { font-size:11px; } .ink { color:var(--ink); }
 
-/* ===== Hero ===== */
-.hero{position:relative;overflow:hidden;text-align:center;padding:28px 18px 22px;border-radius:var(--radius);background:radial-gradient(ellipse at center top, var(--hero-glow), transparent 70%)}
-.hcap{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:600;margin-bottom:6px}
-.hstand{font-size:56px;font-weight:700;line-height:1;letter-spacing:-.02em;margin:0 0 10px}
-.hstand .cur{font-size:20px;font-weight:500;color:var(--muted);margin-inline-end:4px;vertical-align:6px}
-.pct{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;padding:4px 11px;border-radius:var(--radius-pill)}
-.pct.pos{background:var(--grnbg);color:var(--green)} .pct.neg{background:var(--redbg);color:var(--red)}
-.hsplit{display:flex;gap:14px;margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-.hsplit>div{flex:1}
-.hsplit .l{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.hsplit .v{font-size:18px;font-weight:700;margin-top:5px}
+/* Rows */
+.row { display:flex; justify-content:space-between; font-size:12px; padding:7px 0; border-bottom:1px solid var(--line); font-variant-numeric:tabular-nums; }
+.row.noborder { border:0; padding:4px 0; }
+.row .r { text-align:right; } .hn { display:flex; gap:6px; align-items:center; }
 
-/* ===== Section label ===== */
-.slab{display:flex;align-items:baseline;justify-content:space-between;margin:28px 4px 12px}
-.slab span{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
-.slab em{font-style:normal;font-size:12px;color:var(--muted)}
-.sect{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600;margin:26px 4px 12px;display:flex;align-items:center;gap:8px}
+/* Allocation bar */
+.bar { height:8px; border-radius:4px; background:var(--line); display:flex; overflow:hidden; margin:4px 0 8px; }
+.bar span { display:block; height:100%; }
 
-/* ===== Broker cards ===== */
-.cards{display:flex;flex-direction:column;gap:12px}
-.bcard{position:relative;overflow:hidden;width:100%;text-align:left;display:block;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:15px 17px 13px 19px;box-shadow:var(--shadow-1);font:inherit;color:inherit;cursor:pointer;transition:transform .18s ease, box-shadow .18s ease}
-.bcard:hover{background:var(--surface-2);box-shadow:var(--shadow-2)}
-.bcard:active{transform:scale(.992)}
-.bcard .accent{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent-dot,var(--muted))}
-.brow1{display:flex;align-items:center;justify-content:space-between}
-.bnm{display:flex;align-items:center;gap:9px;font-weight:600;font-size:15px}
-.bdot{width:9px;height:9px;border-radius:50%;background:var(--accent-dot,var(--muted))}
-.bworth{font-size:18px;font-weight:700}
-.brow2{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
-.btag{font-size:11.5px;color:var(--muted);font-weight:500}
-.chip{font-size:12px;font-weight:700;padding:3px 9px;border-radius:var(--radius-pill);white-space:nowrap}
-.chip.pos{background:var(--grnbg);color:var(--green)} .chip.neg{background:var(--redbg);color:var(--red)}
+/* Chips */
+.chip { font-size:9px; padding:1px 6px; border-radius:999px; background:#eef6ef; color:var(--grn); }
+.chip-under_review, .chip-unsure { background:#faf3e2; color:var(--gold); }
+.chip-warn { background:#faf3e2; color:var(--gold); }
 
-/* ===== Allocation bar ===== */
-.bar{height:6px;border-radius:4px;background:var(--surface-3);display:flex;overflow:hidden;margin-top:12px}
-.bar span{display:block;height:100%}
+/* Idle cash + boxes */
+.idle { font-size:11px; color:var(--gold); background:#faf3e2; border-radius:8px; padding:6px 9px; margin-top:6px; }
+.box { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-top:4px; }
+.box.spread, .spread { display:flex; justify-content:space-between; align-items:center; }
+.big2 { font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; } .gold { color:var(--gold); }
 
-/* ===== Links / buttons ===== */
-.datalink{display:block;width:100%;margin-top:16px;padding:13px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text);font:inherit;font-weight:600;font-size:14px;cursor:pointer;box-shadow:var(--shadow-1);transition:.18s}
-.datalink:hover{background:var(--surface-2)}
-.datalink:disabled{opacity:.5;cursor:not-allowed}
-.datalink.danger{color:var(--red);border-color:transparent;background:var(--redbg)}
+/* Data screen */
+.paste { width:100%; min-height:120px; margin-top:8px; border:1px solid var(--line); border-radius:10px; padding:8px; font-family:inherit; font-size:12px; }
+.err { color:var(--red); font-size:12px; } .okmsg { color:var(--grn); font-size:12px; }
 
-/* ===== Reconciliation banner ===== */
-.recon{font-size:12px;border-radius:var(--radius-sm);padding:9px 12px;margin-top:10px;font-weight:500}
-.recon.ok{color:var(--green);background:var(--grnbg)}
-.recon.warn{color:var(--red);background:var(--redbg)}
-
-/* ===== Rows (deposits, holdings) ===== */
-.row{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:10px 2px;border-bottom:1px solid var(--border);font-variant-numeric:tabular-nums}
-.row.noborder{border:0;padding:5px 2px}
-.row .r{text-align:right}
-.hn{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
-
-/* ===== Chips (halal status) ===== */
-.chip-halal{background:var(--grnbg);color:var(--green);font-size:9.5px;padding:2px 7px;border-radius:var(--radius-pill);font-weight:700;letter-spacing:.02em}
-.chip-under_review,.chip-unsure,.chip-warn{background:rgba(245,166,35,.15);color:var(--amber);font-size:9.5px;padding:2px 7px;border-radius:var(--radius-pill);font-weight:700}
-
-/* ===== Idle cash ===== */
-.idle{font-size:12px;color:var(--amber);background:rgba(245,166,35,.15);border-radius:var(--radius-sm);padding:9px 12px;margin-top:10px;font-weight:600}
-
-/* ===== Box (fees / purification) ===== */
-.box{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow-1)}
-.box.spread,.spread{display:flex;justify-content:space-between;align-items:center}
-.big2{font-size:18px;font-weight:700}
-
-/* ===== Data / Settings screen ===== */
-.paste{width:100%;min-height:120px;margin-top:10px;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;font-family:inherit;font-size:12px;background:var(--surface);color:var(--text);resize:vertical}
-input[type=file]{font:inherit;font-size:12px;color:var(--muted);margin-top:6px}
-.err{color:var(--red);font-size:12.5px;margin-top:8px;font-weight:500}
-.okmsg{color:var(--green);font-size:12.5px;margin-top:8px;font-weight:600}
-.verline{font-size:13px;color:var(--text)}
-.verline b{font-weight:700}
-
-/* ===== Settings rows / segmented control (theme toggle) ===== */
-.settings-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:6px;font-size:14px;gap:12px}
-.seg{display:flex;gap:4px;background:var(--surface-3);padding:3px;border-radius:var(--radius-sm)}
-.seg button{padding:6px 12px;border:none;background:transparent;color:var(--muted);border-radius:8px;font-size:12px;font-weight:600}
-.seg button.active{background:var(--surface);color:var(--text)}
-
-/* ===== Confirm dialog ===== */
-.confirm-backdrop{position:fixed;inset:0;background:var(--scrim);backdrop-filter:blur(2px);display:flex;align-items:center;justify-content:center;padding:22px;z-index:50}
-.confirm{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;max-width:330px;box-shadow:var(--shadow-2)}
-.confirm p{font-size:14px;line-height:1.5;color:var(--text)}
-.confirm-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:16px}
-.confirm-actions button{border:1px solid var(--border);background:transparent;color:var(--text);border-radius:var(--radius-sm);padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
-.confirm-actions .danger{background:var(--red);color:#fff;border-color:var(--red)}
-
-/* ===== Entrance animation ===== */
-@media (prefers-reduced-motion: no-preference){
-  .rise{opacity:0;transform:translateY(10px);animation:rise .55s cubic-bezier(.2,.7,.2,1) forwards}
-  .d1{animation-delay:.04s}.d2{animation-delay:.12s}.d3{animation-delay:.2s}.d4{animation-delay:.28s}.d5{animation-delay:.36s}.d6{animation-delay:.44s}
-}
-@media (prefers-reduced-motion: reduce){
-  *{animation-duration:.01ms !important;transition-duration:.01ms !important}
-}
-@keyframes rise{to{opacity:1;transform:none}}
+/* Confirm dialog */
+.confirm-backdrop { position:fixed; inset:0; background:rgba(43,43,43,.35); display:flex; align-items:center; justify-content:center; padding:20px; }
+.confirm { background:var(--card); border-radius:14px; padding:16px; max-width:320px; }
+.confirm-actions { display:flex; justify-content:flex-end; gap:10px; margin-top:12px; }
+.confirm-actions button { border:1px solid var(--line); background:transparent; border-radius:8px; padding:6px 12px; font:inherit; cursor:pointer; }
+.gold { color:var(--gold); }
