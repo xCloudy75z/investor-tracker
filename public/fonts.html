@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Numbers font — pick one</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Hanken+Grotesk:wght@400;500;600;700&family=Instrument+Sans:wght@400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{--paper:#f4eee2;--card:#fffefb;--ink:#221f19;--mut:#8c8472;--line:#e7ddca;--gold:#a87f00;--grn:#2c7a4a}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--paper);color:var(--ink);font-family:"Hanken Grotesk",system-ui,sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;padding:24px 16px 70px}
+  .wrap{max-width:760px;margin:0 auto}
+  h1{font-size:21px;font-weight:700;letter-spacing:-.01em}
+  .sub{color:var(--mut);font-size:14px;margin:6px 0 20px;line-height:1.5}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  .opt{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;cursor:pointer;transition:.15s;box-shadow:0 10px 28px -14px rgba(70,55,20,.22)}
+  .opt:active{transform:scale(.99)}
+  .opt.sel{border-color:var(--gold);box-shadow:0 0 0 3px rgba(168,127,0,.2)}
+  .fname{font-size:13px;font-weight:700;color:var(--gold)}
+  .cap{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:600;margin-top:14px}
+  .big{font-size:40px;font-weight:600;line-height:1;margin-top:7px;letter-spacing:-.01em}
+  .pct{font-size:14px;font-weight:600;color:var(--grn);margin-top:8px}
+  .rl{display:flex;justify-content:space-between;font-size:15px;margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+  .rl .k{color:var(--mut)} .rl .v{font-weight:600}
+  .f-geist .big,.f-geist .pct,.f-geist .v{font-family:"Geist",sans-serif}
+  .f-hanken .big,.f-hanken .pct,.f-hanken .v{font-family:"Hanken Grotesk",sans-serif}
+  .f-instr .big,.f-instr .pct,.f-instr .v{font-family:"Instrument Sans",sans-serif}
+  .f-bric .big,.f-bric .pct,.f-bric .v{font-family:"Bricolage Grotesque",sans-serif}
+  .f-space .big,.f-space .pct,.f-space .v{font-family:"Space Grotesk",sans-serif}
+  .pick{margin-top:22px;text-align:center;font-size:15px;font-weight:600;color:var(--gold);min-height:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Which numbers font?</h1>
+  <p class="sub">Same figures, five typefaces. Tap the one whose numbers look best — then just tell me the letter in chat.</p>
+  <div class="grid">
+    <div class="opt f-geist" onclick="pick(this,'A · Geist')"><div class="fname">A · Geist</div><div class="cap">Worth now</div><div class="big">AED 7,148.13</div><div class="pct">▴ +AED 48.13 · +0.7%</div><div class="rl"><span class="k">Sarwa</span><span class="v">AED 5,435.74</span></div></div>
+    <div class="opt f-hanken" onclick="pick(this,'B · Hanken Grotesk')"><div class="fname">B · Hanken Grotesk</div><div class="cap">Worth now</div><div class="big">AED 7,148.13</div><div class="pct">▴ +AED 48.13 · +0.7%</div><div class="rl"><span class="k">Sarwa</span><span class="v">AED 5,435.74</span></div></div>
+    <div class="opt f-instr" onclick="pick(this,'C · Instrument Sans')"><div class="fname">C · Instrument Sans</div><div class="cap">Worth now</div><div class="big">AED 7,148.13</div><div class="pct">▴ +AED 48.13 · +0.7%</div><div class="rl"><span class="k">Sarwa</span><span class="v">AED 5,435.74</span></div></div>
+    <div class="opt f-bric" onclick="pick(this,'D · Bricolage Grotesque')"><div class="fname">D · Bricolage Grotesque</div><div class="cap">Worth now</div><div class="big">AED 7,148.13</div><div class="pct">▴ +AED 48.13 · +0.7%</div><div class="rl"><span class="k">Sarwa</span><span class="v">AED 5,435.74</span></div></div>
+    <div class="opt f-space" onclick="pick(this,'E · Space Grotesk')"><div class="fname">E · Space Grotesk</div><div class="cap">Worth now</div><div class="big">AED 7,148.13</div><div class="pct">▴ +AED 48.13 · +0.7%</div><div class="rl"><span class="k">Sarwa</span><span class="v">AED 5,435.74</span></div></div>
+  </div>
+  <div class="pick" id="pick"></div>
+</div>
+<script>
+  function pick(el,name){
+    document.querySelectorAll('.opt').forEach(function(o){o.classList.remove('sel')});
+    el.classList.add('sel');
+    document.getElementById('pick').textContent='You picked '+name+' — tell me this letter in chat.';
+  }
+</script>
+</body>
+</html>
