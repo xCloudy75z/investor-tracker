@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Idea — load data from a link</title>
+<style>
+  :root{--paper:#f4eee2;--card:#fffefb;--ink:#221f19;--ink2:#4b463c;--mut:#8c8472;--line:#e7ddca;--gold:#a87f00;--grn:#2c7a4a;--grnbg:#e9f1e6;--red:#b3402a;--redbg:#f7e9e3;--blue:#356a9e}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(120% 80% at 100% -10%, #fbf6ec, rgba(251,246,236,0) 55%),var(--paper);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.5}
+  .wrap{max-width:640px;margin:0 auto;padding:30px 20px 70px}
+  .eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:700}
+  h1{font-size:27px;font-weight:700;letter-spacing:-.02em;margin:6px 0 8px}
+  .sub{color:var(--ink2);font-size:15px}
+  h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--mut);font-weight:700;margin:34px 2px 14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:0 10px 30px -14px rgba(70,55,20,.18)}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:540px){.two{grid-template-columns:1fr}}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;margin-bottom:10px}
+  .tag.now{background:var(--redbg);color:var(--red)} .tag.new{background:var(--grnbg);color:var(--grn)}
+  .mini{font-size:13.5px;color:var(--ink2);display:flex;flex-direction:column;gap:7px}
+  .mini b{color:var(--ink);font-weight:600}
+  .step{display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:0}
+  .ill{flex:0 0 76px;height:70px;border-radius:14px;background:#f8f2e6;border:1px solid var(--line);display:grid;place-items:center}
+  .n{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:700}
+  .st{font-size:16px;font-weight:600;margin:3px 0 4px}
+  .sd{font-size:13.5px;color:var(--ink2)}
+  .callout{margin-top:16px;padding:16px 18px;border-left:3px solid var(--gold);background:#fbf4e3;border-radius:0 12px 12px 0}
+  .callout h3{font-size:15px;margin-bottom:5px} .callout p{font-size:13.5px;color:#5c5648}
+  .opt{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+  .opt:last-child{border-bottom:0}
+  .dot{flex:0 0 10px;height:10px;border-radius:50%;margin-top:5px}
+  .foot{margin-top:30px;padding-top:16px;border-top:1px solid var(--line);font-size:12.5px;color:var(--mut)}
+  svg{display:block}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Investment Tracker · idea</div>
+  <h1>Load your data from a link</h1>
+  <p class="sub">A way to skip the file-passing dance (and the OneDrive that keeps stopping). Here's how it would work — then you decide.</p>
+
+  <h2>The difference</h2>
+  <div class="two">
+    <div class="card">
+      <span class="tag now">Today — 5 steps</span>
+      <div class="mini">
+        <span>1. I make a data <b>file</b></span>
+        <span>2. It goes to <b>OneDrive / chat</b></span>
+        <span>3. You <b>find</b> it on your phone</span>
+        <span>4. You <b>download</b> it</span>
+        <span>5. You <b>import</b> it in the app</span>
+        <span style="color:var(--red)">Breaks when OneDrive stops 😕</span>
+      </div>
+    </div>
+    <div class="card">
+      <span class="tag new">With a link — 1 tap</span>
+      <div class="mini">
+        <span>You tap <b>“Sync now”</b> in the app</span>
+        <span>It pulls the latest data itself</span>
+        <span style="color:var(--grn)">Done. No files, no OneDrive ✅</span>
+        <div style="margin-top:10px">
+          <svg width="150" height="46" viewBox="0 0 150 46" fill="none">
+            <rect x="1" y="6" width="52" height="34" rx="8" fill="#fff" stroke="#e7ddca"/>
+            <path d="M14 23h26M32 16l8 7-8 7" stroke="#356a9e" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M62 23h24" stroke="#a87f00" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
+            <rect x="95" y="3" width="40" height="40" rx="9" fill="#e9f1e6" stroke="#c7e2cf"/>
+            <path d="M107 23l6 6 11-13" stroke="#2c7a4a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>How it would work</h2>
+  <div class="card">
+
+    <div class="step">
+      <div class="ill">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect x="5" y="8" width="30" height="22" rx="3" fill="#fff" stroke="#8c8472"/>
+          <path d="M9 14h12M9 18h16M9 22h9" stroke="#a87f00" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="30" cy="30" r="8" fill="#2c7a4a"/><path d="M27 30l2 2 4-5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div><div class="n">Step 1</div><div class="st">I prepare your data once</div><div class="sd">Same as now — I turn your statements into your portfolio data (Baraka, Sarwa, …).</div></div>
+    </div>
+
+    <div class="step">
+      <div class="ill">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <path d="M16 24a6 6 0 0 1 0-8l4-4a6 6 0 0 1 8 8l-2 2" stroke="#356a9e" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M24 16a6 6 0 0 1 0 8l-4 4a6 6 0 0 1-8-8l2-2" stroke="#356a9e" stroke-width="2.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div><div class="n">Step 2</div><div class="st">I host it at a private link</div><div class="sd">The data lives at one secret web address. I paste that link into your app <b>once</b>, and the app remembers it.</div></div>
+    </div>
+
+    <div class="step">
+      <div class="ill">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <path d="M20 7v10M20 7l-5 5M20 7l5 5" stroke="#a87f00" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9 20v10a3 3 0 0 0 3 3h16a3 3 0 0 0 3-3V20" stroke="#8c8472" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div><div class="n">Step 3</div><div class="st">When data changes, I refresh the link</div><div class="sd">New statement? I update what's at that same address. You don't touch any files.</div></div>
+    </div>
+
+    <div class="step">
+      <div class="ill">
+        <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+          <rect x="12" y="5" width="16" height="27" rx="3" fill="#fff" stroke="#8c8472"/>
+          <path d="M17 25h6" stroke="#8c8472" stroke-width="2" stroke-linecap="round"/>
+          <circle cx="27" cy="27" r="7" fill="#2c7a4a"/><path d="M27 24v3l2 1" stroke="#fff" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div><div class="n">Step 4</div><div class="st">You tap “Sync now”</div><div class="sd">The app fetches the latest data from the link and updates instantly. One tap, done — no OneDrive, no downloads.</div></div>
+    </div>
+
+  </div>
+
+  <h2>The honest trade-off</h2>
+  <div class="callout">
+    <h3>Your data would live at a web link</h3>
+    <p>Right now your data only exists as a file you hold. With a link, the financial numbers sit at a secret web address so the app can fetch them. There's <b>no name, date of birth, or location</b> in it (your rule) — just amounts and holdings. But anyone who got that exact secret link could read those numbers. It's a small privacy trade for a lot less hassle.</p>
+  </div>
+
+  <h2>Your options</h2>
+  <div class="card">
+    <div class="opt"><span class="dot" style="background:var(--grn)"></span><div><b>Secret link (recommended)</b> — an unlisted address only you and I know; I can change it anytime if you ever want to “revoke” it.</div></div>
+    <div class="opt"><span class="dot" style="background:var(--blue)"></span><div><b>Password-locked</b> — the data is scrambled and the app asks for a PIN to unlock it. More private, one extra step.</div></div>
+    <div class="opt"><span class="dot" style="background:var(--mut)"></span><div><b>Keep files</b> — do nothing; keep importing a file. Most private, but you deal with the OneDrive/file dance.</div></div>
+  </div>
+
+  <div class="foot">
+    Nothing is built yet — this is just the idea. Tell me “go with the secret link”, “password-locked”, or “keep files”, and I'll take it from there.
+    <br><br>Meanwhile, importing the <b>portfolio-import-v02.json</b> file still works exactly as before.
+  </div>
+
+</div>
+</body>
+</html>
