@@ -44,7 +44,7 @@ export function Home({ env, view, setView, onOpenBroker, onOpenData }: Props) {
 
       <section className="hero rise d2">
         <div className="hcap">Standing · {view === "current" ? "current round" : "all-time"}</div>
-        <div className={`num hstand ${pos ? "pos" : "neg"}`}>{formatMoney(total.standingBase, "AED")}</div>
+        <div className={`num hstand ${pos ? "pos" : "neg"}`}><span className="cur">AED</span>{formatMoney(total.standingBase, "").trim()}</div>
         <span className={`pct ${pos ? "pos" : "neg"}`}>{pos ? "▴" : "▾"} {Math.abs(total.standingPct * 100).toFixed(1)}%</span>
         <div className="hsplit">
           <div><div className="l">Put in</div><div className="num v">{formatMoney(total.capitalBase, "AED")}</div></div>
@@ -64,7 +64,7 @@ export function Home({ env, view, setView, onOpenBroker, onOpenData }: Props) {
               className={`bcard rise ${delay}`}
               key={account.id}
               onClick={() => onOpenBroker(account.id)}
-              style={{ ["--accent" as string]: ACCENT[account.broker] ?? "var(--mut)" } as CSSProperties}
+              style={{ ["--accent-dot" as string]: ACCENT[account.broker] ?? "var(--muted)" } as CSSProperties}
             >
               <span className="accent" />
               <div className="brow1">

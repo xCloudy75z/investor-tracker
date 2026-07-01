@@ -19,6 +19,25 @@ export function save(env: Envelope): void {
 export const now = (): string => new Date().toISOString();
 export const newId = (): string => crypto.randomUUID();
 
+// --- Theme (dark/light) ---
+
+export type Theme = "dark" | "light";
+const THEME_KEY = "investor-app:theme";
+
+/** Read the saved theme (defaults to "dark") and apply it to <html data-theme>. */
+export function loadTheme(): Theme {
+  const saved = window.localStorage.getItem(THEME_KEY);
+  const theme: Theme = saved === "light" ? "light" : "dark";
+  document.documentElement.dataset.theme = theme;
+  return theme;
+}
+
+/** Set + persist the theme, applying it to <html data-theme> immediately. */
+export function setTheme(theme: Theme): void {
+  document.documentElement.dataset.theme = theme;
+  window.localStorage.setItem(THEME_KEY, theme);
+}
+
 // --- Data file helpers (non-pure: DOM + Date) ---
 
 const BACKUP_KEY = "investor-app:lastBackup";

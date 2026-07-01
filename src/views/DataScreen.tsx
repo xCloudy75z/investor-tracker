@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { parseImport } from "../lib/importer";
-import { downloadText, exportText, replaceData, readFileText, forceUpdate } from "../app/runtime";
+import { downloadText, exportText, replaceData, readFileText, forceUpdate, loadTheme, setTheme, type Theme } from "../app/runtime";
 import type { Envelope } from "../lib/types";
 import { Confirm } from "../components/Confirm";
 
@@ -10,6 +10,12 @@ export function DataScreen({ onBack, onReplaced }: Props) {
   const [text, setText] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState<Envelope | null>(null);
+  const [theme, setThemeState] = useState<Theme>(() => loadTheme());
+
+  function chooseTheme(t: Theme) {
+    setTheme(t);
+    setThemeState(t);
+  }
 
   function tryParse(src: string) {
     const r = parseImport(src);
@@ -50,6 +56,15 @@ export function DataScreen({ onBack, onReplaced }: Props) {
   return (
     <main className="wrap">
       <header className="bar"><button className="back" onClick={onBack}>‹ Settings &amp; data</button></header>
+
+      <h2 className="sect">Display</h2>
+      <div className="settings-row">
+        <span>Theme</span>
+        <div className="seg">
+          <button className={theme === "dark" ? "active" : ""} onClick={() => chooseTheme("dark")}>Dark</button>
+          <button className={theme === "light" ? "active" : ""} onClick={() => chooseTheme("light")}>Light</button>
+        </div>
+      </div>
 
       <h2 className="sect">App</h2>
       <p className="verline">Version <b>{__APP_VERSION__}</b></p>

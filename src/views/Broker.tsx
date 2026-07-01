@@ -41,7 +41,7 @@ export function Broker({ env, account, view, setView, onBack }: Props) {
 
       <section className="hero rise d2">
         <div className="hcap">Standing · {view === "current" ? "current round" : "all-time"}</div>
-        <div className={`num hstand ${pos ? "pos" : "neg"}`}>{formatMoney(r.standingBase, "AED")}</div>
+        <div className={`num hstand ${pos ? "pos" : "neg"}`}><span className="cur">AED</span>{formatMoney(r.standingBase, "").trim()}</div>
         <span className={`pct ${pos ? "pos" : "neg"}`}>{pos ? "▴" : "▾"} {Math.abs(r.standingPct * 100).toFixed(1)}%</span>
         <div className="hsplit">
           <div><div className="l">Put in</div><div className="num v">{formatMoney(r.capitalBase, "AED")}</div></div>
