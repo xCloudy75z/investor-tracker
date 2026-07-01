@@ -90,3 +90,21 @@ export async function forceUpdate(): Promise<void> {
     window.location.reload();
   }
 }
+
+// --- Worth history (for the value-over-time chart) ---
+import type { HistoryPoint } from "../lib/chart";
+
+const HISTORY_KEY = "investor-app:history";
+
+export function getHistory(): HistoryPoint[] {
+  try { return JSON.parse(window.localStorage.getItem(HISTORY_KEY) ?? "[]") as HistoryPoint[]; }
+  catch { return []; }
+}
+
+/** Record today's total worth (one point per day; keeps the last ~180 days). */
+export function recordWorth(worthBase: number): void {
+  const today = new Date().toISOString().slice(0, 10);
+  const hist = getHistory().filter((p) => p.date !== today);
+  hist.push({ date: today, worthBase });
+  window.localStorage.setItem(HISTORY_KEY, JSON.stringify(hist.slice(-180)));
+}

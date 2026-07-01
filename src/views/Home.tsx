@@ -3,6 +3,8 @@ import { accountStanding, portfolioStanding, type View } from "../lib/calc";
 import { formatMoney } from "../lib/money";
 import type { Envelope } from "../lib/types";
 import { AllocationBar } from "../components/AllocationBar";
+import { getHistory } from "../app/runtime";
+import { chartGeometry } from "../lib/chart";
 
 interface Props {
   env: Envelope;
@@ -10,6 +12,7 @@ interface Props {
   setView: (v: View) => void;
   onOpenBroker: (id: string) => void;
   onOpenData: () => void;
+  onOpenCosts: () => void;
 }
 
 const ACCENT: Record<string, string> = { sarwa: "var(--sarwa)", baraka: "var(--baraka)", etoro: "var(--etoro)" };
@@ -26,11 +29,13 @@ function Logo() {
   );
 }
 
-export function Home({ env, view, setView, onOpenBroker, onOpenData }: Props) {
+export function Home({ env, view, setView, onOpenBroker, onOpenData, onOpenCosts }: Props) {
   const fx = env.settings.fxRateNow;
   const inputs = env.accounts.map((account) => ({ account, flows: env.cashflows, holdings: env.holdings, fxRateNow: fx, view }));
   const total = portfolioStanding(inputs);
   const pos = total.standingBase >= 0;
+  const history = getHistory();
+  const geo = chartGeometry(history, 300, 90, 8);
 
   return (
     <main className="wrap">
@@ -51,6 +56,22 @@ export function Home({ env, view, setView, onOpenBroker, onOpenData }: Props) {
           <div><div className="l">Worth now</div><div className="num v">{formatMoney(total.worthBase, "AED")}</div></div>
         </div>
       </section>
+
+      {history.length >= 2 ? (
+        <div className="card chartcard rise d3">
+          <div className="hcap">Worth over time</div>
+          <svg viewBox="0 0 300 90" className="chart" preserveAspectRatio="none" aria-label="worth over time">
+            <path d={geo.area} fill="var(--grnbg)" />
+            <path d={geo.line} fill="none" stroke="var(--grn)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+          </svg>
+          <div className="chartx"><span>{history[0].date}</span><span>{history[history.length - 1].date}</span></div>
+        </div>
+      ) : (
+        <div className="card chartcard rise d3">
+          <div className="hcap">Worth over time</div>
+          <p className="muted small" style={{ marginTop: 8 }}>Building your history — open or sync the app over a few days and the trend line appears here.</p>
+        </div>
+      )}
 
       <div className="slab rise d3"><span>Per broker</span><em>tap for detail</em></div>
       <div className="cards">
@@ -80,6 +101,8 @@ export function Home({ env, view, setView, onOpenBroker, onOpenData }: Props) {
           );
         })}
       </div>
+
+      <button className="datalink" onClick={onOpenCosts}>Fees &amp; FX cost</button>
 
       <button className="datalink rise d6" onClick={onOpenData}>Settings &amp; data</button>
     </main>
