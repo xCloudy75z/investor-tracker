@@ -20,18 +20,19 @@ export default defineConfig({
     },
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.svg"],
+      includeAssets: ["favicon.svg", "apple-touch-icon.png", "icon-192.png", "icon-512.png"],
       manifest: {
         name: "Investment Tracker",
-        short_name: "Investments",
-        description: "Honest money-weighted P/L across Sarwa, Baraka, eToro",
-        theme_color: "#faf6ef",
-        background_color: "#faf6ef",
+        short_name: "Portfolio",
+        description: "Honest money-weighted P/L across your brokers",
+        theme_color: "#f4eee2",
+        background_color: "#f4eee2",
         display: "standalone",
         icons: [
-          // NOTE: owner to replace with final PNG art before publishing.
-          // Set base to "/<repo-name>/" in vite.config.ts before deploying to GitHub Pages.
-          { src: "favicon.svg", sizes: "any", type: "image/svg+xml", purpose: "any maskable" }
+          { src: "favicon.svg", sizes: "any", type: "image/svg+xml", purpose: "any" },
+          { src: "icon-192.png", sizes: "192x192", type: "image/png", purpose: "any maskable" },
+          { src: "icon-512.png", sizes: "512x512", type: "image/png", purpose: "any maskable" },
+          { src: "apple-touch-icon.png", sizes: "180x180", type: "image/png" }
         ]
       }
     })
