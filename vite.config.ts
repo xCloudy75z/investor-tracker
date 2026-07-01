@@ -21,6 +21,11 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.svg", "apple-touch-icon.png", "icon-192.png", "icon-512.png"],
+      workbox: {
+        // Standalone preview/guide pages must be fetched from the network, not
+        // rewritten to the app shell by the SPA navigation fallback.
+        navigateFallbackDenylist: [/costs-redesign\.html/, /guide-.*\.html/]
+      },
       manifest: {
         name: "Investment Tracker",
         short_name: "Portfolio",
