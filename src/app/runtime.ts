@@ -51,6 +51,28 @@ export function exportText(): string {
   return serializeEnvelope(load());
 }
 
+// --- Sync from a link (fetch the latest data from a URL) ---
+
+const SYNC_KEY = "investor-app:syncUrl";
+
+/** The saved sync link (empty string if none). */
+export function getSyncUrl(): string {
+  return window.localStorage.getItem(SYNC_KEY) ?? "";
+}
+
+/** Persist the sync link. */
+export function setSyncUrl(url: string): void {
+  window.localStorage.setItem(SYNC_KEY, url.trim());
+}
+
+/** Fetch raw JSON text from the sync URL (cache-busted, bypassing the SW cache). */
+export async function fetchSync(url: string): Promise<string> {
+  const sep = url.includes("?") ? "&" : "?";
+  const res = await fetch(`${url}${sep}t=${Date.now()}`, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.text();
+}
+
 /** Force the installed PWA to fetch the latest deployed version: unregister the
  *  service worker, clear its caches, then reload from the network. The user's
  *  saved data (localStorage) is NOT touched — only the cached app shell. */

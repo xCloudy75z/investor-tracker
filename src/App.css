@@ -109,6 +109,8 @@ body{
 /* ===== Data / Settings screen ===== */
 .paste{width:100%;min-height:120px;margin-top:10px;border:1px solid var(--line);border-radius:12px;padding:10px;font-family:"Hanken Grotesk",sans-serif;font-size:12px;background:var(--card);color:var(--ink);resize:vertical}
 input[type=file]{font:inherit;font-size:12px;color:var(--mut);margin-top:6px}
+.linkinput{width:100%;margin-top:8px;border:1px solid var(--line);border-radius:12px;padding:11px 12px;font:inherit;font-size:13px;background:var(--card);color:var(--ink)}
+.linkinput:focus{outline:2px solid var(--gold);outline-offset:1px}
 .err{color:var(--red);font-size:12.5px;margin-top:8px;font-weight:500}
 .okmsg{color:var(--grn);font-size:12.5px;margin-top:8px;font-weight:600}
 .verline{font-size:13px;color:var(--ink2)}

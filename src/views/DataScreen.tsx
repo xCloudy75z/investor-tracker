@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { parseImport } from "../lib/importer";
-import { downloadText, exportText, replaceData, readFileText, forceUpdate } from "../app/runtime";
+import { downloadText, exportText, replaceData, readFileText, forceUpdate, getSyncUrl, setSyncUrl, fetchSync } from "../app/runtime";
 import type { Envelope } from "../lib/types";
 import { Confirm } from "../components/Confirm";
 
@@ -9,6 +9,24 @@ interface Props { onBack: () => void; onReplaced: (env: Envelope) => void; }
 export function DataScreen({ onBack, onReplaced }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState<Envelope | null>(null);
+  const [syncUrl, setSyncUrlState] = useState<string>(() => getSyncUrl());
+  const [syncMsg, setSyncMsg] = useState<string | null>(null);
+
+  function saveLink() { setSyncUrl(syncUrl); }
+
+  async function syncNow() {
+    setSyncMsg("info:Syncing…");
+    try {
+      setSyncUrl(syncUrl);
+      const text = await fetchSync(syncUrl);
+      const r = parseImport(text);
+      if (!r.ok) { setSyncMsg("err:That link's data isn't valid: " + r.errors.join("; ")); return; }
+      replaceData(r.envelope);
+      onReplaced(r.envelope);
+    } catch {
+      setSyncMsg("err:Couldn't fetch the link — check it and your connection.");
+    }
+  }
 
   function tryParse(src: string) {
     const r = parseImport(src);
@@ -62,6 +80,12 @@ export function DataScreen({ onBack, onReplaced }: Props) {
       <button className="datalink" disabled={updating} onClick={() => { setUpdating(true); forceUpdate(); }}>
         {updating ? "Updating…" : "Update app to latest version"}
       </button>
+
+      <h2 className="sect">Sync from link</h2>
+      <p className="muted small">Paste the private link, then tap Sync to pull your latest data. Replaces current data — a backup is saved first.</p>
+      <input className="linkinput" type="url" inputMode="url" autoComplete="off" placeholder="https://…" value={syncUrl} onChange={(e) => setSyncUrlState(e.target.value)} onBlur={saveLink} />
+      <button className="datalink" disabled={!syncUrl.trim()} onClick={syncNow}>Sync now</button>
+      {syncMsg && <p className={syncMsg.startsWith("err:") ? "err" : "okmsg"}>{syncMsg.replace(/^(err|info):/, "")}</p>}
 
       <h2 className="sect">Export / backup</h2>
       <p className="muted small">Download your current data as a file you can keep or re-import.</p>
