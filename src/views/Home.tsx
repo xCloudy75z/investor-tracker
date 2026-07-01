@@ -11,8 +11,6 @@ interface Props {
   view: View;
   setView: (v: View) => void;
   onOpenBroker: (id: string) => void;
-  onOpenData: () => void;
-  onOpenCosts: () => void;
 }
 
 const ACCENT: Record<string, string> = { sarwa: "var(--sarwa)", baraka: "var(--baraka)", etoro: "var(--etoro)" };
@@ -29,7 +27,7 @@ function Logo() {
   );
 }
 
-export function Home({ env, view, setView, onOpenBroker, onOpenData, onOpenCosts }: Props) {
+export function Home({ env, view, setView, onOpenBroker }: Props) {
   const fx = env.settings.fxRateNow;
   const inputs = env.accounts.map((account) => ({ account, flows: env.cashflows, holdings: env.holdings, fxRateNow: fx, view }));
   const total = portfolioStanding(inputs);
@@ -101,10 +99,6 @@ export function Home({ env, view, setView, onOpenBroker, onOpenData, onOpenCosts
           );
         })}
       </div>
-
-      <button className="datalink" onClick={onOpenCosts}>Fees &amp; FX cost</button>
-
-      <button className="datalink rise d6" onClick={onOpenData}>Settings &amp; data</button>
     </main>
   );
 }

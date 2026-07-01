@@ -35,3 +35,101 @@ export function costTotal(env: Envelope): CostTotal {
     totalBase: parts.reduce((s, p) => s + p.totalBase, 0)
   };
 }
+
+export type RangeMode = "round" | "all" | "custom";
+export interface DateRange { mode: RangeMode; from?: string; to?: string; }
+
+export interface CostRow {
+  id: string;
+  date: string;
+  amountBase: number;
+  amountNative?: number;
+  fxRateUsed?: number;
+  fxCostBase: number;       // 0 for pure fee rows
+  feeBase?: number;         // withdrawal rows that carry a fee, and account-fee rows
+  feeKind?: string;
+  kind: "deposit" | "withdrawal" | "fee";
+  label?: string;           // account-fee rows, e.g. "Management fee"
+}
+
+export interface BrokerCost {
+  accountId: string;
+  label: string;
+  broker: string;
+  deposits: CostRow[];
+  withdrawals: CostRow[];
+  accountFees: CostRow[];
+  feesBase: number;
+  fxDragBase: number;
+  subtotalBase: number;
+}
+
+export interface CostReport {
+  brokers: BrokerCost[];
+  feesBase: number;
+  fxDragBase: number;
+  totalBase: number;
+}
+
+const FEE_LABEL: Record<string, string> = {
+  management: "Management fee", withdrawal: "Withdrawal fee", fx: "FX fee", other: "Fee"
+};
+
+function _inRange(date: string, roundStart: string, range: DateRange): boolean {
+  if (range.mode === "all") return true;
+  if (range.mode === "round") return date >= roundStart;
+  const okFrom = !range.from || date >= range.from;
+  const okTo = !range.to || date <= range.to;
+  return okFrom && okTo;
+}
+
+export function costReport(env: Envelope, range: DateRange): CostReport {
+  const fx = env.settings.fxRateNow;
+  const brokers: BrokerCost[] = env.accounts.map((acc) => {
+    const flows = env.cashflows.filter(
+      (f) => f.accountId === acc.id && f.status === "completed" && _inRange(f.date, acc.roundStartDate, range)
+    );
+    const deposits: CostRow[] = flows.filter((f) => f.type === "deposit").map((f) => ({
+      id: f.id, date: f.date, amountBase: f.amountBase, amountNative: f.amountNative,
+      fxRateUsed: f.fxRateUsed, fxCostBase: f.amountBase - convert(f.amountNative, fx), kind: "deposit"
+    }));
+    const withdrawals: CostRow[] = flows.filter((f) => f.type === "withdrawal").map((f) => ({
+      id: f.id, date: f.date, amountBase: f.amountBase, amountNative: f.amountNative,
+      fxRateUsed: f.fxRateUsed, fxCostBase: convert(f.amountNative, fx) - f.amountBase, kind: "withdrawal"
+    }));
+    const feeFlows = flows.filter((f) => f.type === "fee");
+
+    // Attach each withdrawal fee to a same-date withdrawal (first unused match).
+    const usedFeeIds = new Set<string>();
+    for (const w of withdrawals) {
+      const match = feeFlows.find(
+        (f) => f.feeKind === "withdrawal" && f.date === w.date && !usedFeeIds.has(f.id)
+      );
+      if (match) { w.feeBase = match.amountBase; usedFeeIds.add(match.id); }
+    }
+    const accountFees: CostRow[] = feeFlows.filter((f) => !usedFeeIds.has(f.id)).map((f) => ({
+      id: f.id, date: f.date, amountBase: f.amountBase, fxCostBase: 0, feeBase: f.amountBase,
+      feeKind: f.feeKind, kind: "fee", label: FEE_LABEL[f.feeKind ?? "other"] ?? "Fee"
+    }));
+
+    const fxDragBase =
+      deposits.reduce((s, r) => s + r.fxCostBase, 0) +
+      withdrawals.reduce((s, r) => s + r.fxCostBase, 0);
+    const feesBase =
+      withdrawals.reduce((s, r) => s + (r.feeBase ?? 0), 0) +
+      accountFees.reduce((s, r) => s + (r.feeBase ?? 0), 0);
+
+    return {
+      accountId: acc.id, label: acc.label, broker: acc.broker,
+      deposits, withdrawals, accountFees,
+      feesBase, fxDragBase, subtotalBase: feesBase + fxDragBase
+    };
+  });
+
+  return {
+    brokers,
+    feesBase: brokers.reduce((s, b) => s + b.feesBase, 0),
+    fxDragBase: brokers.reduce((s, b) => s + b.fxDragBase, 0),
+    totalBase: brokers.reduce((s, b) => s + b.subtotalBase, 0)
+  };
+}

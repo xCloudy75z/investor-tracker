@@ -4,9 +4,9 @@ import { downloadText, exportText, replaceData, readFileText, forceUpdate, getSy
 import type { Envelope } from "../lib/types";
 import { Confirm } from "../components/Confirm";
 
-interface Props { onBack: () => void; onReplaced: (env: Envelope) => void; }
+interface Props { onReplaced: (env: Envelope) => void; }
 
-export function DataScreen({ onBack, onReplaced }: Props) {
+export function DataScreen({ onReplaced }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState<Envelope | null>(null);
   const [syncUrl, setSyncUrlState] = useState<string>(() => getSyncUrl());
@@ -65,7 +65,7 @@ export function DataScreen({ onBack, onReplaced }: Props) {
 
   return (
     <main className="wrap">
-      <header className="appbar"><button className="back" onClick={onBack}>‹ Settings &amp; data</button></header>
+      <h1 className="h1">Settings &amp; data</h1>
 
       <h2 className="sect">App</h2>
       <p className="verline">Version <b>{__APP_VERSION__}</b></p>
