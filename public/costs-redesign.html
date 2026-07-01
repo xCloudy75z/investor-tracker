@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Fees &amp; FX — redesign preview</title>
+<style>
+  :root{
+    --paper:#f4eee2; --card:#fffefb; --ink:#221f19; --mut:#8c8472;
+    --line:#e7ddca; --line2:#efe7d7; --gold:#a87f00; --grn:#2c7a4a;
+    --red:#b3402a; --baraka:#356a9e; --sarwa:#a87f00;
+    --shadow:0 1px 1px rgba(70,55,20,.04),0 10px 34px -10px rgba(70,55,20,.16);
+    --shadow-sm:0 1px 2px rgba(70,55,20,.05);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    color:var(--ink); font-variant-numeric:tabular-nums;
+    -webkit-font-smoothing:antialiased;
+    background:
+      radial-gradient(120% 80% at 100% -10%, #fbf6ec 0%, rgba(251,246,236,0) 55%),
+      radial-gradient(90% 60% at -10% 110%, #efe7d6 0%, rgba(239,231,214,0) 50%),
+      #ece3d0;
+    min-height:100vh; padding:24px 14px 48px;
+  }
+  .banner{max-width:360px;margin:0 auto 16px;text-align:center}
+  .banner h1{font-size:16px;font-weight:600;letter-spacing:-.01em}
+  .banner p{font-size:12.5px;color:var(--mut);margin-top:5px;line-height:1.5}
+  .screen{max-width:360px;margin:0 auto;background:var(--paper);border-radius:24px;
+    padding:16px 15px 24px;box-shadow:var(--shadow)}
+  .back{color:var(--mut);font-weight:600;font-size:14px;margin-bottom:14px}
+  .seg{display:flex;background:var(--line2);border:1px solid var(--line);border-radius:999px;padding:3px}
+  .seg button{flex:1;border:0;background:transparent;color:var(--mut);font:inherit;
+    font-size:12px;font-weight:600;padding:7px 0;border-radius:999px;cursor:pointer;transition:.18s}
+  .seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(70,55,20,.14)}
+  .range{text-align:center;font-size:11px;color:var(--mut);margin-top:7px;letter-spacing:.02em}
+  .hero{position:relative;overflow:hidden;margin-top:14px;padding:18px 18px 16px;border-radius:18px;
+    background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+  .hcap{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--mut);font-weight:600}
+  .htot{font-size:34px;font-weight:600;letter-spacing:-.01em;margin:8px 0 12px}
+  .htot span{font-size:16px;color:var(--mut)}
+  .hsplit{display:flex;gap:12px;padding-top:12px;border-top:1px solid var(--line)}
+  .hsplit>div{flex:1}
+  .hl{font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut);font-weight:600}
+  .hv{font-size:17px;font-weight:500;margin-top:3px}
+  .hv span{font-size:11px;color:var(--mut)}
+  .sect{display:flex;align-items:center;justify-content:space-between;margin:22px 4px 9px}
+  .sect .nm{display:flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.14em;
+    text-transform:uppercase;font-weight:700}
+  .sect .dot{width:8px;height:8px;border-radius:50%}
+  .sect .sub{font-size:12px;font-weight:700;color:var(--ink)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:4px 15px;box-shadow:var(--shadow-sm)}
+  .grp{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);font-weight:700;padding:11px 0 3px}
+  .grp.tb{border-top:1px solid var(--line2)}
+  .row{display:flex;justify-content:space-between;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line2)}
+  .row:last-child{border-bottom:0}
+  .amt{font-size:13.5px;font-weight:600}
+  .meta{font-size:11px;color:var(--mut);margin-top:1px}
+  .fx{font-size:13.5px;font-weight:700;color:var(--gold)}
+  .fee{font-size:13.5px;font-weight:700;color:var(--red);margin-top:2px}
+  .tag{font-size:10px;color:var(--mut);font-weight:600}
+  .clab{font-size:10.5px;color:var(--mut);text-align:right}
+  .empty{font-size:12px;color:var(--mut);padding:12px 0;text-align:center}
+  .note{max-width:360px;margin:16px auto 0;font-size:12px;color:var(--mut);text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+  <div class="banner">
+    <h1>Fees &amp; FX — new design</h1>
+    <p>Tap <b>This round</b> vs <b>All time</b> to see the totals change. Each deposit &amp; withdrawal shows its own cost.</p>
+  </div>
+
+  <div class="screen">
+    <div class="back">‹ Fees &amp; FX</div>
+    <div class="seg">
+      <button data-r="round">This round</button>
+      <button data-r="all" class="on">All time</button>
+      <button data-r="custom">Custom</button>
+    </div>
+    <div class="range" id="range">Apr 2024 – Jun 2026 · all activity</div>
+
+    <div class="hero">
+      <div class="hcap">What it has cost you</div>
+      <div class="htot"><span id="totPre"></span><span style="font-size:34px;color:var(--ink)" id="tot">437.60</span> <span>AED</span></div>
+      <div class="hsplit">
+        <div><div class="hl">Fees paid</div><div class="hv" id="fees">89.20 <span>AED</span></div></div>
+        <div><div class="hl">FX spread</div><div class="hv" id="fx">348.40 <span>AED</span></div></div>
+      </div>
+    </div>
+
+    <div id="brokers"></div>
+  </div>
+
+  <div class="note">This is a design preview only — not the live app. Real numbers from your latest data.</div>
+
+<script>
+  var peg = "3.6725";
+  var DATA = {
+    baraka:{ label:"Baraka", color:"#356a9e", roundStart:"2025-10-28",
+      deposits:[
+        {date:"2024-04-05", amt:"3,790.57", usd:"992.71", rate:"3.818", fx:"144.84"},
+        {date:"2025-10-28", amt:"1,100.00", usd:"289.04", rate:"3.806", fx:"38.50"},
+        {date:"2026-02-09", amt:"500.00",   usd:"131.12", rate:"3.813", fx:"18.46"}
+      ],
+      withdrawals:[
+        {date:"2024-08-02", amt:"3,297.14", usd:"933.72", rate:"3.531", fx:"131.95", fee:"88.28"}
+      ],
+      fees:[]
+    },
+    sarwa:{ label:"Sarwa", color:"#a87f00", roundStart:"2026-05-01",
+      deposits:[
+        {date:"2026-05-29", amt:"500.00",   usd:"135.78", rate:"3.683", fx:"1.35"},
+        {date:"2026-06-24", amt:"5,000.00", usd:"1,357.85", rate:"3.682", fx:"13.30"}
+      ],
+      withdrawals:[],
+      fees:[
+        {date:"2026-06-30", label:"Management fee", meta:"monthly charge", fee:"0.92"}
+      ]
+    }
+  };
+
+  var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  function fmtDate(iso){ var p=iso.split("-"); return (+p[2])+" "+MONTHS[+p[1]-1]+" "+p[0]; }
+  function num(s){ return parseFloat(s.replace(/,/g,"")); }
+  function money(n){ return n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}); }
+  function inRange(iso, mode, roundStart){
+    if(mode==="all"||mode==="custom") return true;
+    return iso >= roundStart;
+  }
+
+  function render(mode){
+    var box = document.getElementById("brokers");
+    box.innerHTML="";
+    var gFees=0, gFx=0;
+    var keys=["baraka","sarwa"];
+    for(var k=0;k<keys.length;k++){
+      var b=DATA[keys[k]];
+      var deps=b.deposits.filter(function(d){return inRange(d.date,mode,b.roundStart);});
+      var wds =b.withdrawals.filter(function(d){return inRange(d.date,mode,b.roundStart);});
+      var fes =b.fees.filter(function(d){return inRange(d.date,mode,b.roundStart);});
+      var subFx=0, subFee=0;
+      deps.forEach(function(d){subFx+=num(d.fx);});
+      wds.forEach(function(d){subFx+=num(d.fx); if(d.fee) subFee+=num(d.fee);});
+      fes.forEach(function(d){subFee+=num(d.fee);});
+      var sub=subFx+subFee;
+      gFees+=subFee; gFx+=subFx;
+
+      var html="";
+      html+='<div class="sect"><span class="nm" style="color:'+b.color+'"><span class="dot" style="background:'+b.color+'"></span>'+b.label+'</span>'+
+            '<span class="sub">'+money(sub)+' AED</span></div>';
+      html+='<div class="card">';
+      if(deps.length===0 && wds.length===0 && fes.length===0){
+        html+='<div class="empty">No activity in this range.</div>';
+      } else {
+        if(deps.length){
+          html+='<div class="grp">Deposits</div>';
+          deps.forEach(function(d){
+            html+='<div class="row"><div><div class="amt">'+d.amt+' AED</div>'+
+              '<div class="meta">'+fmtDate(d.date)+' · $'+d.usd+' @ '+d.rate+'</div></div>'+
+              '<div style="text-align:right"><div class="fx">−'+d.fx+'</div><div class="clab">FX cost</div></div></div>';
+          });
+        }
+        if(wds.length){
+          html+='<div class="grp'+(deps.length?' tb':'')+'">Withdrawals</div>';
+          wds.forEach(function(d){
+            var right='<div class="fx">−'+d.fx+' <span class="tag">FX</span></div>';
+            if(d.fee) right+='<div class="fee">−'+d.fee+' <span class="tag">fee</span></div>';
+            html+='<div class="row"><div><div class="amt">'+d.amt+' AED</div>'+
+              '<div class="meta">'+fmtDate(d.date)+' · $'+d.usd+' @ '+d.rate+'</div></div>'+
+              '<div style="text-align:right">'+right+'</div></div>';
+          });
+        }
+        if(fes.length){
+          html+='<div class="grp'+((deps.length||wds.length)?' tb':'')+'">Account fees</div>';
+          fes.forEach(function(d){
+            html+='<div class="row"><div><div class="amt">'+d.label+'</div>'+
+              '<div class="meta">'+fmtDate(d.date)+' · '+d.meta+'</div></div>'+
+              '<div style="text-align:right"><div class="fee">−'+d.fee+'</div><div class="clab">fee</div></div></div>';
+          });
+        }
+      }
+      html+='</div>';
+      box.insertAdjacentHTML("beforeend", html);
+    }
+    document.getElementById("tot").textContent=money(gFees+gFx);
+    document.getElementById("fees").innerHTML=money(gFees)+' <span>AED</span>';
+    document.getElementById("fx").innerHTML=money(gFx)+' <span>AED</span>';
+    var r=document.getElementById("range");
+    if(mode==="round") r.textContent="Each broker’s current round → today";
+    else if(mode==="custom") r.textContent="Custom — you’d pick a start and end date";
+    else r.textContent="Apr 2024 – Jun 2026 · all activity";
+  }
+
+  var btns=document.querySelectorAll(".seg button");
+  for(var i=0;i<btns.length;i++){
+    btns[i].addEventListener("click", function(){
+      for(var j=0;j<btns.length;j++) btns[j].classList.remove("on");
+      this.classList.add("on");
+      render(this.getAttribute("data-r"));
+    });
+  }
+  render("all");
+</script>
+</body>
+</html>
