@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Refresh button — pick a style</title>
+<style>
+  :root{
+    --paper:#f4eee2; --card:#fffefb; --ink:#221f19; --mut:#8c8472;
+    --line:#e7ddca; --line2:#efe7d7; --gold:#a87f00; --grn:#2c7a4a; --grnbg:#e9f1e6;
+    --baraka:#356a9e; --shadow:0 1px 1px rgba(70,55,20,.04),0 10px 34px -10px rgba(70,55,20,.16);
+    --shadow-sm:0 1px 2px rgba(70,55,20,.05);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);
+    font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;background:#e3d9c4;min-height:100vh;padding:22px 14px 48px}
+  .wrap{max-width:380px;margin:0 auto}
+  h1{font-size:16px;font-weight:600;text-align:center}
+  .sub{font-size:12.5px;color:#6f675a;text-align:center;margin:5px 0 18px;line-height:1.5}
+  .variant{background:var(--paper);border-radius:20px;padding:16px 16px 18px;box-shadow:var(--shadow);margin-bottom:16px}
+  .vlabel{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);font-weight:700;margin-bottom:10px}
+  /* mini baraka card */
+  .bcard{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 15px}
+  .accent{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--baraka)}
+  .brow{display:flex;align-items:center;justify-content:space-between}
+  .bnm{display:flex;align-items:center;gap:8px;font-weight:600;font-size:14.5px}
+  .bdot{width:8px;height:8px;border-radius:50%;background:var(--baraka)}
+  .bworth{font-size:16px;font-weight:600}
+  /* shared refresh row */
+  .prow{display:flex;align-items:center;gap:8px;margin-top:11px;flex-wrap:wrap}
+  .ptxt{font-size:11.5px;color:var(--mut)}
+  .ptxt b{color:var(--ink);font-weight:600}
+  .ok{color:var(--grn);font-weight:700}
+  /* A: pill with time inside */
+  .pillA{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:var(--card);
+    color:var(--ink);font:inherit;font-size:11.5px;font-weight:600;padding:6px 12px;border-radius:999px;cursor:pointer;box-shadow:var(--shadow-sm);transition:.15s}
+  .pillA:active{transform:scale(.97)}
+  .pillA .ic{color:var(--grn);font-weight:700}
+  .pillA.on{background:var(--grnbg);border-color:#cfe3ce}
+  /* B: ghost refresh button */
+  .btnB{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);background:var(--card);
+    color:var(--grn);font:inherit;font-size:11.5px;font-weight:700;padding:6px 12px;border-radius:10px;cursor:pointer;box-shadow:var(--shadow-sm);transition:.15s;margin-left:auto}
+  .btnB:active{transform:scale(.97)}
+  /* C: round icon button + caption */
+  .iconC{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--grn);
+    font-size:16px;font-weight:700;cursor:pointer;display:grid;place-items:center;box-shadow:var(--shadow-sm);transition:.15s;flex:none}
+  .iconC:active{transform:scale(.95)}
+  .capC{font-size:11.5px;color:var(--mut)}
+  .capC b{color:var(--ink);font-weight:600}
+  .spin{display:inline-block;animation:sp .7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .pick{max-width:380px;margin:6px auto 0;font-size:12.5px;color:#6f675a;text-align:center;line-height:1.6}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Refresh button — pick a style</h1>
+    <p class="sub">Each is a real, tappable mock of the SPUS price refresh on your Baraka card. <b>Tap the refresh in each</b> to feel the loading + confirmation. Then tell me <b>A</b>, <b>B</b>, or <b>C</b>.</p>
+
+    <!-- Variant A -->
+    <div class="variant">
+      <div class="vlabel">A · One pill (time inside the button)</div>
+      <div class="bcard"><div class="accent"></div>
+        <div class="brow"><div class="bnm"><span class="bdot"></span>Baraka</div><div class="bworth">2,226.75 AED</div></div>
+        <div class="prow">
+          <span class="ptxt">SPUS <b>$57.41</b></span>
+          <button class="pillA" id="pillA"><span class="ic" id="icA">↻</span> <span id="txA">Updated 3 min ago</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variant B -->
+    <div class="variant">
+      <div class="vlabel">B · Info line + refresh button</div>
+      <div class="bcard"><div class="accent"></div>
+        <div class="brow"><div class="bnm"><span class="bdot"></span>Baraka</div><div class="bworth">2,226.75 AED</div></div>
+        <div class="prow">
+          <span class="ptxt">SPUS <b>$57.41</b> · <span id="tmB">updated 2:45 PM</span></span>
+          <button class="btnB" id="btnB"><span id="icB">↻</span> <span id="txB">Refresh</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variant C -->
+    <div class="variant">
+      <div class="vlabel">C · Icon button + status caption</div>
+      <div class="bcard"><div class="accent"></div>
+        <div class="brow"><div class="bnm"><span class="bdot"></span>Baraka</div><div class="bworth">2,226.75 AED</div></div>
+        <div class="prow">
+          <button class="iconC" id="iconC"><span id="icC">↻</span></button>
+          <span class="capC">SPUS <b>$57.41</b><br><span id="capC">Updated 2:45 PM</span></span>
+        </div>
+      </div>
+    </div>
+
+    <p class="pick">All three: tap → <b>Updating…</b> (spinner) → <b>✓ Updated just now</b> → settles to the time. Reply <b>A / B / C</b> (or mix ideas).</p>
+  </div>
+
+<script>
+  function cycle(opts){
+    // opts: { onUpdating, onDone, onIdle }
+    let busy = false;
+    return function(){
+      if(busy) return; busy = true;
+      opts.onUpdating();
+      setTimeout(function(){
+        opts.onDone();
+        setTimeout(function(){ opts.onIdle(); busy = false; }, 1800);
+      }, 1100);
+    };
+  }
+  var spin = '<span class="spin">↻</span>';
+
+  // A
+  var pillA=document.getElementById('pillA'), icA=document.getElementById('icA'), txA=document.getElementById('txA');
+  pillA.addEventListener('click', cycle({
+    onUpdating:function(){ icA.innerHTML=spin; txA.textContent='Updating…'; },
+    onDone:function(){ pillA.classList.add('on'); icA.textContent='✓'; txA.innerHTML='<span class="ok">Updated just now</span>'; },
+    onIdle:function(){ pillA.classList.remove('on'); icA.textContent='↻'; txA.textContent='Updated just now'; }
+  }));
+
+  // B
+  var btnB=document.getElementById('btnB'), icB=document.getElementById('icB'), txB=document.getElementById('txB'), tmB=document.getElementById('tmB');
+  btnB.addEventListener('click', cycle({
+    onUpdating:function(){ icB.innerHTML=spin; txB.textContent='Updating…'; },
+    onDone:function(){ icB.textContent='✓'; txB.textContent='Updated'; tmB.innerHTML='<span class="ok">updated just now</span>'; },
+    onIdle:function(){ icB.textContent='↻'; txB.textContent='Refresh'; tmB.textContent='updated just now'; }
+  }));
+
+  // C
+  var iconC=document.getElementById('iconC'), icC=document.getElementById('icC'), capC=document.getElementById('capC');
+  iconC.addEventListener('click', cycle({
+    onUpdating:function(){ icC.innerHTML=spin; capC.textContent='Updating…'; },
+    onDone:function(){ icC.textContent='✓'; capC.innerHTML='<span class="ok">✓ Updated just now</span>'; },
+    onIdle:function(){ icC.textContent='↻'; capC.textContent='Updated just now'; }
+  }));
+</script>
+</body>
+</html>
