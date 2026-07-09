@@ -31,3 +31,17 @@ export function applyLivePrice(env: Envelope, live: LivePrice | null, now: strin
   );
   return { ...env, holdings };
 }
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** Human relative time from an ISO timestamp to `now` (injected). */
+export function relativeTime(iso: string, now: string): string {
+  const secs = Math.floor((new Date(now).getTime() - new Date(iso).getTime()) / 1000);
+  if (secs < 60) return "just now";
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs} hr ago`;
+  const d = new Date(iso);
+  return `${d.getUTCDate()} ${MONTHS[d.getUTCMonth()]}`;
+}

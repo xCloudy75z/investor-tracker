@@ -3,8 +3,9 @@ import { accountStanding, portfolioStanding, type View } from "../lib/calc";
 import { formatMoney } from "../lib/money";
 import type { Envelope } from "../lib/types";
 import { AllocationBar } from "../components/AllocationBar";
-import { getHistory } from "../app/runtime";
+import { getHistory, now } from "../app/runtime";
 import { chartGeometry } from "../lib/chart";
+import { relativeTime } from "../lib/price";
 
 interface Props {
   env: Envelope;
@@ -13,6 +14,7 @@ interface Props {
   onOpenBroker: (id: string) => void;
   live?: import("../lib/price").LivePrice | null;
   onRefreshPrice?: () => void;
+  refreshState?: "idle" | "updating" | "done" | "error";
 }
 
 const ACCENT: Record<string, string> = { sarwa: "var(--sarwa)", baraka: "var(--baraka)", etoro: "var(--etoro)" };
@@ -29,7 +31,7 @@ function Logo() {
   );
 }
 
-export function Home({ env, view, setView, onOpenBroker, live, onRefreshPrice }: Props) {
+export function Home({ env, view, setView, onOpenBroker, live, onRefreshPrice, refreshState }: Props) {
   const fx = env.settings.fxRateNow;
   const inputs = env.accounts.map((account) => ({ account, flows: env.cashflows, holdings: env.holdings, fxRateNow: fx, view }));
   const total = portfolioStanding(inputs);
@@ -75,9 +77,22 @@ export function Home({ env, view, setView, onOpenBroker, live, onRefreshPrice }:
 
       <div className="slab rise d3"><span>Per broker</span><em>tap for detail</em></div>
         {live && (
-          <div className="pricenote">
-            SPUS ${(live.priceMinor / 100).toFixed(2)} · as of {live.asOf || live.fetchedAt.slice(0, 10)}
-            {onRefreshPrice && <button className="pricerefresh" onClick={onRefreshPrice}>↻ Refresh</button>}
+          <div className="pricerow">
+            <span className="ptxt">SPUS ${(live.priceMinor / 100).toFixed(2)}</span>
+            <button
+              className={"pricepill" + (refreshState === "done" ? " on" : "")}
+              onClick={onRefreshPrice}
+              disabled={refreshState === "updating"}
+            >
+              <span className={refreshState === "updating" ? "spin" : ""}>{refreshState === "done" ? "✓" : "↻"}</span>{" "}
+              {refreshState === "updating"
+                ? "Updating…"
+                : refreshState === "done"
+                ? "Updated just now"
+                : refreshState === "error"
+                ? "Couldn't refresh"
+                : `Updated ${relativeTime(live.fetchedAt, now())}`}
+            </button>
           </div>
         )}
       <div className="cards">

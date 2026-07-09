@@ -22,6 +22,7 @@ function worthOf(e: Envelope): number {
 export function App() {
   const [env, setEnv] = useState<Envelope | null>(null);
   const [live, setLive] = useState<LivePrice | null>(() => getLivePrice());
+  const [refreshState, setRefreshState] = useState<"idle" | "updating" | "done" | "error">("idle");
   const [view, setView] = useState<View>("current");
   const [route, setRoute] = useState<Route>({ name: "home" });
 
@@ -35,7 +36,12 @@ export function App() {
     }
   }, []);
 
-  const refreshPrice = () => fetchSpusPrice().then((lp) => { setLivePrice(lp); setLive(lp); }).catch(() => {});
+  const refreshPrice = () => {
+    setRefreshState("updating");
+    fetchSpusPrice()
+      .then((lp) => { setLivePrice(lp); setLive(lp); setRefreshState("done"); setTimeout(() => setRefreshState("idle"), 1800); })
+      .catch(() => { setRefreshState("error"); setTimeout(() => setRefreshState("idle"), 1800); });
+  };
 
   if (!env) return <main className="wrap">Loading…</main>;
 
@@ -48,13 +54,13 @@ export function App() {
     const account = shown.accounts.find((a) => a.id === route.id);
     content = account
       ? <Broker env={shown} account={account} view={view} setView={setView} onBack={() => setRoute({ name: "home" })} />
-      : <Home env={shown} view={view} setView={setView} live={live} onRefreshPrice={refreshPrice} onOpenBroker={(id) => setRoute({ name: "broker", id })} />;
+      : <Home env={shown} view={view} setView={setView} live={live} onRefreshPrice={refreshPrice} refreshState={refreshState} onOpenBroker={(id) => setRoute({ name: "broker", id })} />;
   } else if (route.name === "data") {
     content = <DataScreen onReplaced={(e) => { setEnv(e); recordWorth(worthOf(applyLivePrice(e, getLivePrice(), now()))); setRoute({ name: "home" }); }} />;
   } else if (route.name === "costs") {
     content = <Costs env={shown} />;
   } else {
-    content = <Home env={shown} view={view} setView={setView} live={live} onRefreshPrice={refreshPrice} onOpenBroker={(id) => setRoute({ name: "broker", id })} />;
+    content = <Home env={shown} view={view} setView={setView} live={live} onRefreshPrice={refreshPrice} refreshState={refreshState} onOpenBroker={(id) => setRoute({ name: "broker", id })} />;
   }
 
   return (
