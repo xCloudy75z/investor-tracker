@@ -11,6 +11,8 @@ interface Props {
   view: View;
   setView: (v: View) => void;
   onOpenBroker: (id: string) => void;
+  live?: import("../lib/price").LivePrice | null;
+  onRefreshPrice?: () => void;
 }
 
 const ACCENT: Record<string, string> = { sarwa: "var(--sarwa)", baraka: "var(--baraka)", etoro: "var(--etoro)" };
@@ -27,7 +29,7 @@ function Logo() {
   );
 }
 
-export function Home({ env, view, setView, onOpenBroker }: Props) {
+export function Home({ env, view, setView, onOpenBroker, live, onRefreshPrice }: Props) {
   const fx = env.settings.fxRateNow;
   const inputs = env.accounts.map((account) => ({ account, flows: env.cashflows, holdings: env.holdings, fxRateNow: fx, view }));
   const total = portfolioStanding(inputs);
@@ -72,6 +74,12 @@ export function Home({ env, view, setView, onOpenBroker }: Props) {
       )}
 
       <div className="slab rise d3"><span>Per broker</span><em>tap for detail</em></div>
+        {live && (
+          <div className="pricenote">
+            SPUS ${(live.priceMinor / 100).toFixed(2)} · as of {live.asOf || live.fetchedAt.slice(0, 10)}
+            {onRefreshPrice && <button className="pricerefresh" onClick={onRefreshPrice}>↻ Refresh</button>}
+          </div>
+        )}
       <div className="cards">
         {env.accounts.map((account, i) => {
           const r = accountStanding({ account, flows: env.cashflows, holdings: env.holdings, fxRateNow: fx, view });

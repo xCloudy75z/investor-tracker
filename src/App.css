@@ -145,6 +145,10 @@ input[type=file]{font:inherit;font-size:12px;color:var(--mut);margin-top:6px}
 .customrange .linkinput{margin-top:0}
 .range{text-align:center;margin-top:0}
 .costsect{justify-content:space-between}
+
+/* ===== Live price note ===== */
+.pricenote{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--mut);margin:6px 4px 0}
+.pricerefresh{border:0;background:transparent;color:var(--grn);font:inherit;font-size:11.5px;font-weight:700;cursor:pointer;padding:2px 4px}
 .csub{font-size:12px;font-weight:700}
 .grp{font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--mut);font-weight:700;padding:11px 0 3px}
 .grp.tb{border-top:1px solid var(--line2);margin-top:2px}

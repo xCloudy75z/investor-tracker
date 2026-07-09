@@ -37,6 +37,11 @@ export function validateEnvelope(value: unknown): ValidationResult {
   if (errors.length > 0) return { ok: false, errors };
 
   const accountIds = new Set((env.accounts ?? []).map((a) => a.id));
+  for (const a of env.accounts ?? []) {
+    if (typeof a.roundStartDate !== "string" || a.roundStartDate.trim() === "") {
+      errors.push(`Account ${a.id} is missing roundStartDate`);
+    }
+  }
   for (const f of env.cashflows ?? []) {
     if (!accountIds.has(f.accountId)) errors.push(`Cashflow ${f.id} references unknown account ${f.accountId}`);
   }

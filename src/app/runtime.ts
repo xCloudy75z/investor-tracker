@@ -108,3 +108,28 @@ export function recordWorth(worthBase: number): void {
   hist.push({ date: today, worthBase });
   window.localStorage.setItem(HISTORY_KEY, JSON.stringify(hist.slice(-180)));
 }
+
+// --- Live price (Baraka SPUS auto-price; MVP client-side) ---
+import type { LivePrice } from "../lib/price";
+
+const LIVE_PRICE_KEY = "investor-app:livePrice";
+// MVP: owner's free Twelve Data key (client-side, personal tool; ships in the public bundle by design).
+const TWELVE_DATA_KEY = "a2622d32d8bc4020a558c675eb15b163";
+
+export function getLivePrice(): LivePrice | null {
+  try { const s = window.localStorage.getItem(LIVE_PRICE_KEY); return s ? (JSON.parse(s) as LivePrice) : null; }
+  catch { return null; }
+}
+
+export function setLivePrice(lp: LivePrice): void {
+  window.localStorage.setItem(LIVE_PRICE_KEY, JSON.stringify(lp));
+}
+
+/** Fetch SPUS's latest price from Twelve Data. Throws on any error (caller swallows). */
+export async function fetchSpusPrice(): Promise<LivePrice> {
+  const res = await fetch(`https://api.twelvedata.com/quote?symbol=SPUS&apikey=${TWELVE_DATA_KEY}`, { cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = (await res.json()) as { close?: string; datetime?: string; status?: string; message?: string };
+  if (data.status === "error" || !data.close) throw new Error(`Twelve Data: ${data.message ?? "no price"}`);
+  return { symbol: "SPUS", priceMinor: Math.round(parseFloat(data.close) * 100), asOf: data.datetime ?? "", fetchedAt: new Date().toISOString() };
+}

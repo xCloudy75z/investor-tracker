@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
-import { load, recordWorth } from "./app/runtime";
+import { load, recordWorth, now, getLivePrice, setLivePrice, fetchSpusPrice } from "./app/runtime";
+import { applyLivePrice, shouldRefetch, type LivePrice } from "./lib/price";
 import { seedEnvelope } from "./lib/seed";
 import { portfolioStanding, type View } from "./lib/calc";
 import type { Envelope } from "./lib/types";
@@ -20,6 +21,7 @@ function worthOf(e: Envelope): number {
 
 export function App() {
   const [env, setEnv] = useState<Envelope | null>(null);
+  const [live, setLive] = useState<LivePrice | null>(() => getLivePrice());
   const [view, setView] = useState<View>("current");
   const [route, setRoute] = useState<Route>({ name: "home" });
 
@@ -27,25 +29,32 @@ export function App() {
     let e = load();
     if (e.accounts.length === 0) { e = seedEnvelope(); }
     setEnv(e);
-    recordWorth(worthOf(e));
+    recordWorth(worthOf(applyLivePrice(e, getLivePrice(), now())));
+    if (shouldRefetch(getLivePrice(), now())) {
+      fetchSpusPrice().then((lp) => { setLivePrice(lp); setLive(lp); }).catch(() => {});
+    }
   }, []);
 
+  const refreshPrice = () => fetchSpusPrice().then((lp) => { setLivePrice(lp); setLive(lp); }).catch(() => {});
+
   if (!env) return <main className="wrap">Loading…</main>;
+
+  const shown = applyLivePrice(env, live, now());
 
   const activeTab: Tab = route.name === "costs" ? "costs" : route.name === "data" ? "data" : "home";
 
   let content;
   if (route.name === "broker") {
-    const account = env.accounts.find((a) => a.id === route.id);
+    const account = shown.accounts.find((a) => a.id === route.id);
     content = account
-      ? <Broker env={env} account={account} view={view} setView={setView} onBack={() => setRoute({ name: "home" })} />
-      : <Home env={env} view={view} setView={setView} onOpenBroker={(id) => setRoute({ name: "broker", id })} />;
+      ? <Broker env={shown} account={account} view={view} setView={setView} onBack={() => setRoute({ name: "home" })} />
+      : <Home env={shown} view={view} setView={setView} live={live} onRefreshPrice={refreshPrice} onOpenBroker={(id) => setRoute({ name: "broker", id })} />;
   } else if (route.name === "data") {
-    content = <DataScreen onReplaced={(e) => { setEnv(e); recordWorth(worthOf(e)); setRoute({ name: "home" }); }} />;
+    content = <DataScreen onReplaced={(e) => { setEnv(e); recordWorth(worthOf(applyLivePrice(e, getLivePrice(), now()))); setRoute({ name: "home" }); }} />;
   } else if (route.name === "costs") {
-    content = <Costs env={env} />;
+    content = <Costs env={shown} />;
   } else {
-    content = <Home env={env} view={view} setView={setView} onOpenBroker={(id) => setRoute({ name: "broker", id })} />;
+    content = <Home env={shown} view={view} setView={setView} live={live} onRefreshPrice={refreshPrice} onOpenBroker={(id) => setRoute({ name: "broker", id })} />;
   }
 
   return (
