@@ -1,4 +1,5 @@
-import { accountStanding, reconcile, feesPaid, purificationSummary, type View } from "../lib/calc";
+import { accountStanding, reconcile, purificationSummary, type View } from "../lib/calc";
+import { costReport } from "../lib/costs";
 import { formatMoney, convert } from "../lib/money";
 import type { Envelope, Account } from "../lib/types";
 import { AllocationBar } from "../components/AllocationBar";
@@ -17,8 +18,8 @@ export function Broker({ env, account, view, setView, onBack }: Props) {
   const holdings = env.holdings.filter((h) => h.accountId === account.id);
   const r = accountStanding({ account, flows, holdings, fxRateNow: fx, view });
   const rec = reconcile(flows, account);
-  const fees = feesPaid(flows, view, account);
-  const feesAll = feesPaid(flows, "all", account);
+  const cost = costReport(env, { mode: view === "current" ? "round" : "all" }).brokers
+    .find((b) => b.accountId === account.id);
   const pur = purificationSummary(env.purification, account.id);
   const pos = r.standingBase >= 0;
 
@@ -84,10 +85,13 @@ export function Broker({ env, account, view, setView, onBack }: Props) {
         <div className="idle" key={c.id}>● Idle cash {formatMoney(convert(c.currentValueNative, fx), "AED")} ({formatMoney(c.currentValueNative, "USD")}) — uninvested</div>
       ))}
 
-      <h2 className="sect">Fees paid</h2>
-      <div className="box spread">
-        <div><div className="num big2 neg">{formatMoney(fees, "AED")}</div><span className="muted small">this {view === "current" ? "round" : "all-time"}</span></div>
-        <div className="r muted small">All-time<br /><b className="num ink">{formatMoney(feesAll, "AED")}</b></div>
+      <h2 className="sect">Fees &amp; FX cost · {view === "current" ? "this round" : "all-time"}</h2>
+      <div className="box">
+        <div className="spread">
+          <div><div className="num big2 neg">{formatMoney(cost?.subtotalBase ?? 0, "AED")}</div><span className="muted small">what it has cost you</span></div>
+        </div>
+        <div className="row noborder"><div className="muted">Fees paid</div><div className="r num">{formatMoney(cost?.feesBase ?? 0, "AED")}</div></div>
+        <div className="row noborder"><div className="muted">FX spread <span className="muted small">· bank rate vs peg</span></div><div className="r num">{formatMoney(cost?.fxDragBase ?? 0, "AED")}</div></div>
       </div>
 
       <h2 className="sect">Purification <span className="chip-warn">screened, not certified</span></h2>
