@@ -36,7 +36,7 @@ export interface BreakevenResult {
 export const LANE_PRESETS: Lane[] = [
   { id: "cheap", label: "Cheap bank transfer", hint: "Sarwa ADIB / Baraka Standard", fxInPct: 0.3, fxOutPct: 0.3, flatFeeMinor: 0 },
   { id: "apple", label: "Baraka Apple Pay", hint: "instant funding · hidden FX", fxInPct: 2.2, fxOutPct: 0.3, flatFeeMinor: 0 },
-  { id: "etoro", label: "eToro / card", hint: "est. FX + $5 withdrawal", fxInPct: 1.5, fxOutPct: 1.5, flatFeeMinor: convert(500, PEG), estimate: true },
+  { id: "etoro", label: "eToro (bank wire)", hint: "your ~0.63% FX + $5 withdrawal", fxInPct: 0.63, fxOutPct: 0.63, flatFeeMinor: convert(500, PEG), estimate: true },
 ];
 
 export function breakeven(investedMinor: number, grossGainPct: number, lane: Lane): BreakevenResult {

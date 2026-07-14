@@ -22,11 +22,11 @@ describe("breakeven", () => {
     expect(r.breakEvenPct).toBeCloseTo(0.6, 1);
   });
 
-  it("eToro lane (~1.5% each way + $5) on +20% nets ~16% and breaks even ~3.5%", () => {
+  it("eToro lane (~0.63% each way + $5) on +20% nets ~18.1% and breaks even ~1.6%", () => {
     const etoro = LANE_PRESETS.find((l) => l.id === "etoro")!;
     const r = breakeven(500000, 20, etoro);
-    expect(r.netProfitPct).toBeCloseTo(16.06, 1);
-    expect(r.breakEvenPct).toBeCloseTo(3.45, 1);
+    expect(r.netProfitPct).toBeCloseTo(18.13, 1);
+    expect(r.breakEvenPct).toBeCloseTo(1.64, 1);
     expect(r.totalCostMinor).toBeGreaterThan(0);
   });
 
