@@ -1,4 +1,4 @@
-export type Tab = "home" | "costs" | "data";
+export type Tab = "home" | "costs" | "calc" | "data";
 
 export function BottomNav({ active, onNavigate }: { active: Tab; onNavigate: (t: Tab) => void }) {
   return (
@@ -10,6 +10,10 @@ export function BottomNav({ active, onNavigate }: { active: Tab; onNavigate: (t:
       <button className={`tab ${active === "costs" ? "on" : ""}`} onClick={() => onNavigate("costs")} aria-label="Fees and FX">
         <svg viewBox="0 0 24 24"><path d="M19 5 5 19" /><circle cx="7.5" cy="7.5" r="2.2" /><circle cx="16.5" cy="16.5" r="2.2" /></svg>
         Fees &amp; FX
+      </button>
+      <button className={`tab ${active === "calc" ? "on" : ""}`} onClick={() => onNavigate("calc")} aria-label="Calculator">
+        <svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2.5" /><path d="M9 7h6" /><circle cx="9.3" cy="12" r=".6" /><circle cx="14.7" cy="12" r=".6" /><circle cx="9.3" cy="16.5" r=".6" /><circle cx="14.7" cy="16.5" r=".6" /></svg>
+        Calculator
       </button>
       <button className={`tab ${active === "data" ? "on" : ""}`} onClick={() => onNavigate("data")} aria-label="Settings">
         <svg viewBox="0 0 24 24"><path d="M4 7h10" /><path d="M18 7h2" /><circle cx="16" cy="7" r="2" /><path d="M4 17h2" /><path d="M10 17h10" /><circle cx="8" cy="17" r="2" /></svg>

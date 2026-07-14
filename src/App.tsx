@@ -9,9 +9,10 @@ import { Home } from "./views/Home";
 import { Broker } from "./views/Broker";
 import { DataScreen } from "./views/DataScreen";
 import { Costs } from "./views/Costs";
+import { Calculator } from "./views/Calculator";
 import { BottomNav, type Tab } from "./components/BottomNav";
 
-type Route = { name: "home" } | { name: "broker"; id: string } | { name: "data" } | { name: "costs" };
+type Route = { name: "home" } | { name: "broker"; id: string } | { name: "data" } | { name: "costs" } | { name: "calc" };
 
 function worthOf(e: Envelope): number {
   return portfolioStanding(
@@ -47,7 +48,8 @@ export function App() {
 
   const shown = applyLivePrice(env, live, now());
 
-  const activeTab: Tab = route.name === "costs" ? "costs" : route.name === "data" ? "data" : "home";
+  const activeTab: Tab =
+    route.name === "costs" ? "costs" : route.name === "calc" ? "calc" : route.name === "data" ? "data" : "home";
 
   let content;
   if (route.name === "broker") {
@@ -59,6 +61,8 @@ export function App() {
     content = <DataScreen onReplaced={(e) => { setEnv(e); recordWorth(worthOf(applyLivePrice(e, getLivePrice(), now()))); setRoute({ name: "home" }); }} />;
   } else if (route.name === "costs") {
     content = <Costs env={shown} />;
+  } else if (route.name === "calc") {
+    content = <Calculator />;
   } else {
     content = <Home env={shown} view={view} setView={setView} live={live} onRefreshPrice={refreshPrice} refreshState={refreshState} onOpenBroker={(id) => setRoute({ name: "broker", id })} />;
   }
